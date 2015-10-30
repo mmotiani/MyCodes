@@ -3990,6 +3990,4 @@ public class Solution {
     }
 }
 
-/******************Before 2 big top notches************************/
-
 
