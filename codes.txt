@@ -1664,7 +1664,7 @@ public class Solution {
         return str_build.toString();
     }
 }
-/*Zig – Zag conversion of string*/
+/*Zig Â– Zag conversion of string*/
 public class Solution {
     public String convert(String s, int n) {
         if (s.length()==0 || n==1)
@@ -2038,7 +2038,7 @@ return true;
         
     }
 }
-/*count and say iterative like 1, 11, 21, 1211… */
+/*count and say iterative like 1, 11, 21, 1211Â… */
 public class Solution {
     public String countAndSay(int n) {
         String result = "1";
@@ -2063,7 +2063,7 @@ public class Solution {
         return result;
     }
 }
-/*count and say recursive like 1, 11, 21, 1211… */
+/*count and say recursive like 1, 11, 21, 1211Â… */
 	public class Solution {
     public String countAndSay(int n) {
         return helper("1", n);
@@ -2967,7 +2967,7 @@ public class Solution {
         return count;
     }
 }
-/*Rectangle Area – two rectangles are combined to find the total area*/
+/*Rectangle Area Â– two rectangles are combined to find the total area*/
 public class Solution {
     public int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
          int space = 0;
@@ -3990,4 +3990,13 @@ public class Solution {
     }
 }
 
-
+/*Closest Binary Search Tree/BST value*/
+public class Solution{
+	public int closestValue(TreeNode root, double target){
+		int a = root.val;
+		TreeNode kid = target < a ? root.left : root.right;
+		if(kid==null) return a;
+		int b = closestValue(kid,target);
+		return Math.abs(a-target) < Math.abs(b-target) ? a:b;
+	}
+}
