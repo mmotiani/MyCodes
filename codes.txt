@@ -5177,3 +5177,482 @@ public class Solution{
 		return Math.abs(a-target) < Math.abs(b-target) ? a:b;
 	}
 }
+
+/*Cows and Bulls problem*/
+public class Solution {
+    public String getHint(String secret, String guess) {
+        int bulls = 0;
+    int cows = 0;
+    int[] numbers = new int[10];
+    for (int i = 0; i<secret.length(); i++) {
+        int s = Character.getNumericValue(secret.charAt(i));
+        int g = Character.getNumericValue(guess.charAt(i));
+        if (s == g) bulls++;
+        else {
+            if (numbers[s] < 0) cows++;
+            if (numbers[g] > 0) cows++;
+            numbers[s] ++;
+            numbers[g] --;
+        }
+    }
+    return bulls + "A" + cows + "B";
+    }
+}
+/* Integer to English words / numbers to words*/
+public class Solution {
+    public String numberToWords(int num) {
+         if (num == 0) return "Zero";
+    String[] big= {"", "Thousand", "Million", "Billion"};
+    String[] small = {"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+    String[] tens = {"Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+    String[] ones = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"};
+    StringBuilder res = new StringBuilder();
+    int count = 0;
+    while (num != 0) {
+        int cur = num % 1000;
+        int o = cur % 10, t = (cur / 10) % 10, h = cur / 100;
+        StringBuilder tmp = new StringBuilder();
+        if (h != 0) tmp.append(ones[h] + " Hundred ");
+        if (t == 1) tmp.append(small[o] + " ");
+        else {
+            if (t > 1) tmp.append(tens[t-2] + " ");
+            if (o > 0) tmp.append(ones[o] + " ");
+        }
+        if(tmp.length() != 0) tmp.append(big[count] + " ");
+        res.insert(0, tmp);
+        num /= 1000;
+        count++;
+    }
+    return res.toString().trim();
+    }
+}
+/*N-queen Problem */
+public class Solution {
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> ans = new ArrayList<>();
+    char[][] board = new char[n][n];
+    for (int i = 0; i < n; i++)
+        Arrays.fill(board[i], '.');
+    solve(board, n, 0, ans);
+    return ans;
+    }
+    private void solve(char[][] board, int n, int row, List<List<String>> ans) {
+    if (row == n) {
+        List<String> li = new ArrayList<String>();
+        for (char[] rowChars : board) {
+            li.add(new String(rowChars));
+        }
+        ans.add(li);
+        return;
+    }
+    for (int col = 0; col < n; col++) {
+        if (board[row][col] == '.' && isValid(board, n, row, col)) {
+            board[row][col] = 'Q';
+            solve(board, n,  row + 1, ans);
+            board[row][col] = '.';
+
+        }
+    }
+}
+private boolean isValid(char[][] board, int n, int i, int j) {
+    for (int row = 0; row < n; row++)
+        if (board[row][j] == 'Q')
+            return false;
+    for (int col = 0; col < n; col++)
+        if (board[i][col] == 'Q')
+            return false;
+
+    // check diagonal.
+    int row = i, col = j;
+    while (row >= 0 && col >= 0) {
+        if (board[row--][col--] == 'Q')
+            return false;
+    }
+    row = i;
+    col = j;
+    while (row < n && col < n) {
+        if (board[row++][col++] == 'Q')
+            return false;
+    }
+
+    // check other diagonal.
+    row = i;
+    col = j;
+    while (row >= 0 && col < n) {
+        if (board[row--][col++] == 'Q')
+            return false;
+    }
+    row = i;
+    col = j;
+    while (row < n && col >= 0) {
+        if (board[row++][col--] == 'Q')
+            return false;
+    }
+
+    return true;
+}
+}
+/*Number of solution possible in N-Queen Problem using DFS*/
+public class Solution {
+    HashSet<Integer> cols = new HashSet<Integer>();  // Used columns
+HashSet<Integer> diag1 = new HashSet<Integer>(); // 45° diagonal
+HashSet<Integer> diag2 = new HashSet<Integer>(); // 135° diagonal 
+    public int totalNQueens(int n) {
+         return DFS(0, 0, n);
+    }
+    int DFS(int row, int count, int n) {
+    if (row == n) 
+        return count + 1;
+
+    for (int col = 0; col < n; col++) {
+        if (cols.contains(col) || diag1.contains(row - col) || diag2.contains(row + col)) 
+            continue;
+        cols.add(col);
+        diag1.add(row - col); 
+        diag2.add(row + col);
+        count = DFS(row + 1, count, n);
+        cols.remove(col); 
+        diag1.remove(row - col); 
+        diag2.remove(row + col);
+    }
+    return count;
+}
+}
+/* Kth largest element in an unsorted array O(N LogN)*/
+public class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        Arrays.sort(nums);
+        return nums[nums.length-k];
+    }
+}
+/* Kth largest element in an unsorted array O(N LogK) (Min Heap)*/
+public class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> largeK = new PriorityQueue<Integer>(k + 1);
+
+                for(int el : nums) {
+                    largeK.add(el);
+                    if (largeK.size() > k) {
+                        largeK.poll();
+                    }
+                }
+
+                return largeK.poll();
+    }
+}
+/* Kth largest element in an unsorted array O(N) (Quick SORT)
+It is a bit like quick sort.
+First we randomly select a pivot, do as what quick sort does to get the index of the pivot.
+If index == k - 1, which means we've got the kth element;
+If index < k - 1, the kth element is to the right of the index, we need to search from index to right.
+If index > k - 1, the kth element is to the left of the index, we need to search from left to index.
+*/
+public class Solution {
+    public int findKthLargest(int[] nums, int k) {
+       return quickSelect(nums, k - 1, 0, nums.length - 1);
+       
+    }
+    private int quickSelect(int[] arr, int k, int left, int right){
+    int pivot = arr[(left + right) / 2];
+    int orgL = left, orgR = right;
+    while(left <= right){
+        while(arr[left] > pivot){
+            left ++;
+        }
+        while(arr[right] < pivot){
+            right --;
+        }
+
+        if(left <= right){
+            swap(arr, left, right);
+            left ++;
+            right --;
+        }
+    }
+
+    if(orgL < right && k <= right) return quickSelect(arr, k, orgL, right);
+    if(left < orgR && k >= left) return quickSelect(arr, k, left, orgR);
+    return arr[k];
+
+}
+
+private void swap(int[] arr, int idx1, int idx2){
+    int tmp = arr[idx1] + arr[idx2];
+    arr[idx1] = tmp - arr[idx1];
+    arr[idx2] = tmp - arr[idx2];
+
+}
+}
+/* Multiply two strings / multiply 2 strings*/
+public class Solution {
+    public String multiply(String num1, String num2) {
+       int n1 = num1.length(), n2 = num2.length();
+        int[] products = new int[n1 + n2];
+        for (int i = n1 - 1; i >= 0; i--) {
+            for (int j = n2 - 1; j >= 0; j--) {
+                int d1 = num1.charAt(i) - '0';
+                int d2 = num2.charAt(j) - '0';
+                products[i + j + 1] += d1 * d2;
+            }
+        }
+        int carry = 0;
+        for (int i = products.length - 1; i >= 0; i--) {
+            int tmp = (products[i] + carry) % 10;
+            carry = (products[i] + carry) / 10;
+            products[i] = tmp;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int num : products) sb.append(num);
+        while (sb.length() != 0 && sb.charAt(0) == '0') sb.deleteCharAt(0);
+        return sb.length() == 0 ? "0" : sb.toString();
+        
+    }
+}
+/* Longest Palindromic Substring / Longest palindrome in a string*/
+public class Solution {
+    public String longestPalindrome(String s) {
+         String res = "";
+        int currLength = 0;
+        for(int i=0;i<s.length();i++){
+            if(isPalindrome(s,i-currLength-1,i)){
+                res = s.substring(i-currLength-1,i+1);
+                currLength = currLength+2;
+            }
+            else if(isPalindrome(s,i-currLength,i)){
+                res = s.substring(i-currLength,i+1);
+                currLength = currLength+1;
+            }
+        }
+        return res;
+    }
+      public boolean isPalindrome(String s, int begin, int end){
+        if(begin<0) return false;
+        while(begin<end){
+            if(s.charAt(begin++)!=s.charAt(end--)) return false;
+        }
+        return true;
+    }
+}
+/*Perfect Squares / find the least number of perfect square numbers (for example, 1, 4, 9, 16, ...) which sum to n*/
+/*Time Complexity: n * sqrt(n) */
+/*Space Complexity: n  */
+public class Solution {
+    public int numSquares(int n) {
+        int dp[] = new int[n+1];
+        int nearest;
+        for(int i=1 ;i <=n ; i++)
+        {
+            nearest = (int)Math.sqrt(i);
+            int min = dp[i-1];
+            for(int j=nearest ; j>0 ; j--)
+            {
+                if(dp[i-j*j]<min)
+                min = dp[i-j*j];
+            }
+            dp[i] = min+1;
+        }
+        return dp[n];
+    }
+}
+/* Shortest palindrome / Given a string S, you are allowed to convert it to a palindrome by adding characters in front of it. Find and return the shortest palindrome you can find by performing this transformation ITERATIVE*/
+public class Solution {
+    public String shortestPalindrome(String s) {
+        int n = s.length();
+    if(n<=1){
+        return s;
+    }
+    int idx = 0;
+    for(int center = n/2; center>=0; center--){
+        if(valid(s, center, 1)){   //is the longest valid palindrome? (assume length is even)
+            idx = 2*center+1;
+            break;
+        }
+        if(valid(s, center, 0)){  //assume length is odd
+            idx = 2*center;
+            break;
+        }
+
+    }
+    String suffix = s.substring(idx+1);
+    StringBuilder b = new StringBuilder(suffix);
+    return b.reverse().toString()+s;
+    }
+    
+    boolean valid(String s, int center, int shift){
+    int i = center, j = center+shift;
+    while(i>=0 && j<s.length()){
+        if(s.charAt(i)!=s.charAt(j)){
+            break;
+        }
+        i--;
+        j++;
+    }
+    return i<0;
+}
+    
+}
+/* /* Shortest palindrome / Given a string S, you are allowed to convert it to a palindrome by adding characters in front of it. Find and return the shortest palindrome you can find by performing this transformation RECURSIVE 
+
+
+The idea is to use two anchors j and i to compare the String from beginning and end. If jcan reach the end, the String itself is Palindrome. Otherwise, we divide the String by j, and getmid = s.substring(0, j) and suffix.
+We reverse suffix as beginning of result and recursively call shortestPalindrome to get result of mid then appedn suffix to get result
+
+*/
+public class Solution {
+    public String shortestPalindrome(String s) {
+       int j = 0;
+    for (int i = s.length() - 1; i >= 0; i--) {
+        if (s.charAt(i) == s.charAt(j)) { j += 1; }
+    }
+    if (j == s.length()) { return s; }
+    String suffix = s.substring(j);
+    return new StringBuffer(suffix).reverse().toString() + shortestPalindrome(s.substring(0, j)) + suffix;
+}
+    
+}
+/* Largest Number / Given a list of non negative integers, arrange them such that they form the largest number / For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330 */
+public class Solution {
+    public String largestNumber(int[] nums) {
+          if(nums.length==0)
+                return new String();
+                
+            //Convert to string array.
+            List<String> t = new ArrayList<String>();
+            int count = 0;
+            for(int i=0; i<nums.length;i++){
+                if(nums[i]==0)
+                    count++;
+                t.add(Integer.toString(nums[i]));
+            }
+            if(count==nums.length)
+                return Integer.toString(0);
+
+             //sort based on the criterion whichever generates a bigger number in descending order.
+            Collections.sort(t, new Comparator<String>(){
+                @Override
+                public int compare(String s1, String s2){
+                    String front = s1+s2;
+                    String end = s2+s1;
+                    return front.compareTo(end)*(-1);
+
+                }
+            });
+
+            //output the result.
+            StringBuilder sb = new StringBuilder();
+            for(String s : t)
+                sb.append(s);
+            return sb.toString();
+
+    }
+}
+/*Combination Sum	/ Given a set of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T. 
+The same repeated number may be chosen from C unlimited number of times. RECURSIVE
+ */
+public class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        
+        return combinationSum(candidates, target, 0);   
+    }
+     public List<List<Integer>> combinationSum(int[] candidates, int target, int start) {
+
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        Arrays.sort(candidates);
+        for (int i = start; i < candidates.length; i++) {
+            if (candidates[i] <target) {
+                for (List<Integer> ar : combinationSum(candidates, target - candidates[i], i)) {
+                    ar.add(0, candidates[i]);
+                    res.add(ar);
+                }
+            } else if (candidates[i] == target) {
+                List<Integer> lst = new ArrayList<>();
+                lst.add(candidates[i]);
+                res.add(lst);
+            } else
+                break;
+        }
+        return res;
+    }
+}
+/* Combination Sum	/ Given a set of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.  The same repeated number may be chosen from C unlimited number of times. ITERATIVE (DP)
+*/
+public class Solution {
+    public List<List<Integer>> combinationSum(int[] cands, int t) {
+        Arrays.sort(cands); // sort candidates to try them in asc order
+        List<List<List<Integer>>> dp = new ArrayList<>();
+        for (int i = 1; i <= t; i++) { // run through all targets from 1 to t
+            List<List<Integer>> newList = new ArrayList(); // combs for curr i
+            // run through all candidates <= i
+            for (int j = 0; j < cands.length && cands[j] <= i; j++) {
+                // special case when curr target is equal to curr candidate
+                if (i == cands[j]) newList.add(Arrays.asList(cands[j]));
+                // if current candidate is less than the target use prev results
+                else for (List<Integer> l : dp.get(i-cands[j]-1)) {
+                    if (cands[j] <= l.get(0)) {
+                        List cl = new ArrayList<>();
+                        cl.add(cands[j]); cl.addAll(l);
+                        newList.add(cl);
+                    }
+                }
+            }
+            dp.add(newList);
+        }
+        return dp.get(t-1);
+    }
+}
+/*Palindrome Partitioning / Palindrome partitioning / Given a string s, partition s such that every substring of the partition is a palindrome. Return all possible palindrome partitioning of s.
+ */
+public class Solution 
+{
+    public List<List<String>> partition(String s) 
+    {
+        List<List<String>> res=new ArrayList<List<String>>();
+        if(s.length()==0)return res;
+        recur(res,new ArrayList<String>(),s);
+        return res;   
+    }
+     public void recur(List<List<String>> res,List<String> temp, String s)
+     {
+        if(s.length()==0)
+        {
+            res.add(new ArrayList<String>(temp));
+            return;
+        }
+        for(int i=0;i<s.length();i++)
+        {
+            if(isPalin(s.substring(0,i+1))){
+                temp.add(s.substring(0,i+1));
+                recur(res,temp,s.substring(i+1));
+                temp.remove(temp.size()-1);
+            }
+        }
+    }
+    public boolean isPalin(String s)
+    {
+        for(int i=0;i<s.length()/2;i++)
+        {
+            if(s.charAt(i)!=s.charAt(s.length()-1-i))return false;
+        }
+        return true;
+    }
+}
+/* Pow(x. m) / Calculate power function*/
+public class Solution {
+    public double myPow(double x, int m) {
+        double temp=x;
+            if(m==0)
+            return 1;
+            temp=myPow(x,m/2);
+            if(m%2==0)
+            return temp*temp;
+            else 
+            {
+            if(m > 0)
+                return x*temp*temp;
+            else
+                return (temp*temp)/x;
+            }
+    }
+}
+
+
