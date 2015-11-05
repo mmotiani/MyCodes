@@ -1,3 +1,78 @@
+/*Print all nodes that are k distnace away from a a given node in a binary tree*/
+/* Recursive function to print all the nodes at distance k in the
+   tree (or subtree) rooted with given root. See  */
+void printkdistanceNodeDown(node *root, int k)
+{
+    // Base Case
+    if (root == NULL || k < 0)  return;
+ 
+    // If we reach a k distant node, print it
+    if (k==0)
+    {
+        cout << root->data << endl;
+        return;
+    }
+ 
+    // Recur for left and right subtrees
+    printkdistanceNodeDown(root->left, k-1);
+    printkdistanceNodeDown(root->right, k-1);
+}
+ 
+// Prints all nodes at distance k from a given target node.
+// The k distant nodes may be upward or downward.  This function
+// Returns distance of root from target node, it returns -1 if target
+// node is not present in tree rooted with root.
+int printkdistanceNode(node* root, node* target , int k)
+{
+    // Base Case 1: If tree is empty, return -1
+    if (root == NULL) return -1;
+ 
+    // If target is same as root.  Use the downward function
+    // to print all nodes at distance k in subtree rooted with
+    // target or root
+    if (root == target)
+    {
+        printkdistanceNodeDown(root, k);
+        return 0;
+    }
+ 
+    // Recur for left subtree
+    int dl = printkdistanceNode(root->left, target, k);
+ 
+    // Check if target node was found in left subtree
+    if (dl != -1)
+    {
+         // If root is at distance k from target, print root
+         // Note that dl is Distance of root's left child from target
+         if (dl + 1 == k)
+            cout << root->data << endl;
+ 
+         // Else go to right subtree and print all k-dl-2 distant nodes
+         // Note that the right child is 2 edges away from left child
+         else
+            printkdistanceNodeDown(root->right, k-dl-2);
+ 
+         // Add 1 to the distance and return value for parent calls
+         return 1 + dl;
+    }
+ 
+    // MIRROR OF ABOVE CODE FOR RIGHT SUBTREE
+    // Note that we reach here only when node was not found in left subtree
+    int dr = printkdistanceNode(root->right, target, k);
+    if (dr != -1)
+    {
+         if (dr + 1 == k)
+            cout << root->data << endl;
+         else
+            printkdistanceNodeDown(root->left, k-dr-2);
+         return 1 + dr;
+    }
+ 
+    // If target was neither present in left nor in right subtree
+    return -1;
+}
+
+
 /*Binary Tree to circular doubly linked list inorder*/
 // This is a modified in-order traversal adapted to this problem.
 // prev (init to NULL) is used to keep track of previously traversed node.
@@ -992,6 +1067,38 @@ public class Solution {
         }
         return highest;    
     }
+}
+
+/*Merger Intervals*/
+public List<Interval> merge(List<Interval> intervals) {
+    if (intervals.size() <= 1)
+        return intervals;
+
+    // Sort by ascending starting point using an anonymous Comparator
+    Collections.sort(intervals, new Comparator<Interval>() {
+        @Override
+        public int compare(Interval i1, Interval i2) {
+            return Integer.compare(i1.start, i2.start);
+        }
+    });
+
+    List<Interval> result = new LinkedList<Interval>();
+    int start = intervals.get(0).start;
+    int end = intervals.get(0).end;
+
+    for (Interval interval : intervals) {
+        if (interval.start <= end) // Overlapping intervals, move the end if needed
+            end = Math.max(end, interval.end);
+        else {                     // Disjoint intervals, add the previous one and reset bounds
+            result.add(new Interval(start, end));
+            start = interval.start;
+            end = interval.end;
+        }
+    }
+
+    // Add the last interval
+    result.add(new Interval(start, end));
+    return result;
 }
 
 /* merge two sorted arrays at back of other array/ at back of first array/ without using extra space*/
