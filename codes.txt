@@ -1,3 +1,6 @@
+
+
+
 /*Multiplying without using multiplication operator*/
 public static int bitwiseMultiply(int n1, int n2) {
     int a = n1;
