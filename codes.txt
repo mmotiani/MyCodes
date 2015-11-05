@@ -333,6 +333,32 @@ public class Solution {
         
     }
 }
+/*Longest substring without repeating characters*/
+public int LongestSubstring(String s) {
+        int n=s.length();
+        int i=0,j=0;
+        int maxlength=0;
+        char[] string = s.toCharArray();
+        boolean[] buffer = new boolean[256];
+       
+        while(j<n){
+            if(buffer[string[j]]){
+               //maxlength = Math.max(maxlength, j-i);
+               while(string[i]!=string[j]){
+                   buffer[string[i]]=false;
+                   i++;
+               }
+               i++;
+               j++;
+            }
+            else{
+                buffer[string[j]]=true;
+                j++;
+            }
+        }
+       // maxlength = Math.max(maxlength, n-i);
+        return s.substring(i,j);
+    }
 /*Length of longest substring with non-repetitive / repeating characters  */
 public class Solution {
     public int lengthOfLongestSubstring(String s) {
