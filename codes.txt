@@ -1,3 +1,50 @@
+/*Multiplying without using multiplication operator*/
+public static int bitwiseMultiply(int n1, int n2) {
+    int a = n1;
+    int b = n2;
+    int result = 0;
+    while (b != 0)
+    { 
+        if ((b & 1) != 0)
+        {
+        result = result + a;
+        }
+        a <<= 1;
+        b >>>= 1;
+    }
+return result;
+}
+/*Divide two integers without using division operator O(logn)-If it is overflow, return MAX_INT.*/
+public int divide(int dividend, int divisor) {
+    //handle special cases
+    if(divisor==0) return Integer.MAX_VALUE;
+    if(divisor==-1 && dividend == Integer.MIN_VALUE)
+        return Integer.MAX_VALUE;
+ 
+    //get positive values
+    long pDividend = Math.abs((long)dividend);
+    long pDivisor = Math.abs((long)divisor);
+ 
+    int result = 0;
+    while(pDividend>=pDivisor){
+        //calculate number of left shifts
+        int numShift = 0;    
+        while(pDividend>=(pDivisor<<numShift)){
+            numShift++;
+        }
+ 
+        //dividend minus the largest shifted divisor
+        result += 1<<(numShift-1);
+        pDividend -= (pDivisor<<(numShift-1));
+    }
+ 
+    if((dividend>0 && divisor>0) || (dividend<0 && divisor<0)){
+        return result;
+    }else{
+        return -result;
+    }
+}
+
 /*detect conflicts in meeting rooms*/
 pubic boolean isConflict(List<Interval> slots){
     Collection.sort(slots,new Comparator<Interval>(){
