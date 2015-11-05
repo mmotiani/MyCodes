@@ -1,3 +1,29 @@
+/*Inorder successor in BST*/
+public TreeNode successor(TreeNode root, TreeNode p) {
+  if (root == null)
+    return null;
+
+  if (root.val <= p.val) {
+    return successor(root.right, p);
+  } else {
+    TreeNode left = successor(root.left, p);
+    return (left != null) ? left : root;
+  }
+}
+
+/*Inorder predecessor in BST*/
+public TreeNode predecessor(TreeNode root, TreeNode p) {
+  if (root == null)
+    return null;
+
+  if (root.val >= p.val) {
+    return predecessor(root.left, p);
+  } else {
+    TreeNode right = predecessor(root.right, p);
+    return (right != null) ? right : root;
+  }
+}
+
 /*//On a given array with N numbers, find subset of size M (exactly M elements) that equal to SUM.*/
 public static void main(String[] args) throws Exception {
     int[] a = {5,3,2,1,0,4,9,7,8};
