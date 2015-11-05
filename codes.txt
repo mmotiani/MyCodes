@@ -1,3 +1,28 @@
+/*//On a given array with N numbers, find subset of size M (exactly M elements) that equal to SUM.*/
+public static void main(String[] args) throws Exception {
+    int[] a = {5,3,2,1,0,4,9,7,8};
+    subSeqSumSizeM(a,3,5);
+  }
+  private static void subSeqSumSizeM(int[] a, int m, int sum) {
+   
+    if(a == null || (a.length==0) || m<=0 || m>a.length)
+      return;
+    
+    int answer = 0;
+    
+    for(int i=0; i<m; i++) {
+      answer = answer + a[i];
+    }
+    
+    for(int j=1; j<a.length-m; j++) {
+      if(answer == sum)
+        System.out.println((j-1)+ "-" + (j+m-2));
+      
+      answer = answer -a[j-1] + a[j+m-1];
+    }    
+  }
+  
+  
 /* Upside down Binary Tree iterative*/
 public class Solution{
 	public TreeNode upside(TreeNode root){
@@ -1250,7 +1275,7 @@ public class Solution {
         
     }
 }
-/*Decode Characters (A-1, B-2,�..Z-26) ITERATIVE*/
+/*Decode Characters (A-1, B-2,..Z-26) ITERATIVE*/
 public class Solution {
     public int numDecodings(String s) {
         int n1 =1, n2=1, n3=0;
@@ -1267,7 +1292,7 @@ public class Solution {
     return n2;
     }
 }
-/* Decode Characters (A-1, B-2,�..Z-26) RECURSIVE */
+/* Decode Characters (A-1, B-2,..Z-26) RECURSIVE */
 	
 /* If a word can be segmented into one or more dictionary workds.*/
 public class Solution {
@@ -2841,7 +2866,7 @@ public class Solution {
         return str_build.toString();
     }
 }
-/*Zig  Zag conversion of string*/
+/*Zig Â Zag conversion of string*/
 public class Solution {
     public String convert(String s, int n) {
         if (s.length()==0 || n==1)
@@ -3215,7 +3240,7 @@ return true;
         
     }
 }
-/*count and say iterative like 1, 11, 21, 1211 */
+/*count and say iterative like 1, 11, 21, 1211Â */
 public class Solution {
     public String countAndSay(int n) {
         String result = "1";
@@ -3240,7 +3265,7 @@ public class Solution {
         return result;
     }
 }
-/*count and say recursive like 1, 11, 21, 1211 */
+/*count and say recursive like 1, 11, 21, 1211Â */
 	public class Solution {
     public String countAndSay(int n) {
         return helper("1", n);
@@ -4144,7 +4169,7 @@ public class Solution {
         return count;
     }
 }
-/*Rectangle Area  two rectangles are combined to find the total area*/
+/*Rectangle Area Â two rectangles are combined to find the total area*/
 public class Solution {
     public int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
          int space = 0;
@@ -5295,8 +5320,8 @@ private boolean isValid(char[][] board, int n, int i, int j) {
 /*Number of solution possible in N-Queen Problem using DFS*/
 public class Solution {
     HashSet<Integer> cols = new HashSet<Integer>();  // Used columns
-HashSet<Integer> diag1 = new HashSet<Integer>(); // 45� diagonal
-HashSet<Integer> diag2 = new HashSet<Integer>(); // 135� diagonal 
+HashSet<Integer> diag1 = new HashSet<Integer>(); // 45° diagonal
+HashSet<Integer> diag2 = new HashSet<Integer>(); // 135° diagonal 
     public int totalNQueens(int n) {
          return DFS(0, 0, n);
     }
