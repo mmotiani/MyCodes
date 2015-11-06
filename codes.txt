@@ -1,3 +1,36 @@
+
+/*Check if two strings are one edit distance apart*/
+public static boolean onlyOneEdit(String first, String second)
+{
+  if(first.equals(second))
+  {
+    return false;
+  }
+    
+  int l1 = first.length();
+  int l2 = second.length();
+    
+  if(l1 - l2 > 1 || l2 - l1 > 1)
+  {
+    // At least two edits .. no need to continue
+    return false;
+  }
+    
+  String longer = (l1 > l2)? first : second;
+  String shorter = (l1 > l2)? second : first;
+    
+  for(int i = 0; i < shorter.length(); i++)
+  {
+    if(longer.charAt(i) != shorter.charAt(i))
+    {
+        int shift = (l1 == l2)? 0 : 1;
+        return longer.substring(i + 1 + shift).equals(shorter.substring(i + 1));
+    }
+  }
+  // No difference detected until the end of the shorter string  
+  return true;
+}
+
 /*Print all nodes that are k distnace away from a a given node in a binary tree*/
 /* Recursive function to print all the nodes at distance k in the
    tree (or subtree) rooted with given root. See  */
