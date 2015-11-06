@@ -1,4 +1,34 @@
+/*Check if a string is concatenaion of  strings in a given dictionary*/
+public void findConcatenations(String key){
+		
+		System.out.println("For Key: " + key);
+		boolean[] checkArray = new boolean[key.length()+1];
+		
+		int startPoint = 0;
+		int iterator = 1;
+		boolean wordMatched = false;
+		
+		while(iterator<=key.length())
+		{
+			String subWord = key.substring(startPoint, iterator);
+			if(dictionary.contains(subWord))
+				{
+					checkArray[iterator] = true;
+					wordMatched = true;
+				}else if(wordMatched)
+				{
+					startPoint = --iterator;
+					wordMatched = false;
+				}
+			iterator++;
+		}
 
+		
+		if(checkArray[key.length()]==true)
+			System.out.println("Answer: Perfect!");
+		else
+			System.out.println("Answer:  :(");
+	}
 /*Check if two strings are one edit distance apart*/
 public static boolean onlyOneEdit(String first, String second)
 {
