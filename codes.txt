@@ -1,3 +1,84 @@
+/*Check if sum of two numbers is equal to sum of other two numbers*/
+public static void printVal(int[] arr) { 
+if (arr.length == 0 || arr.length < 4) return; 
+HashMap<Integer, ArrayList<Pair>> map = new HashMap<Integer, ArrayList<Pair>>(); 
+for (int i = 0; i < arr.length - 1; i++) { 
+for (int j = i + 1; j < arr.length; j++) { 
+Pair p = new Pair(i,j); 
+if (map.containsKey(arr[i] + arr[j])) { 
+map.get(arr[i] + arr[j]).add(p); 
+} else { 
+ArrayList<Pair> arrList = new ArrayList<Pair>(); 
+arrList.add(p); 
+map.put(arr[i] + arr[j], arrList); 
+} 
+} 
+} 
+
+for (Integer i : map.keySet()) { 
+ArrayList<Pair> list = map.get(i); 
+if (list.size() == 2) { 
+System.out.println(list.get(0).one + " " + list.get(0).two + " " + 
+list.get(1).one + " " + list.get(1).two); 
+} 
+if (list.size() > 2) { 
+for (int k = 0; k < list.size() - 1; k++) { 
+for (int m = k + 1; m < list.size(); m++) { 
+System.out.println(list.get(k).one + " " + list.get(k).two 
++ " " + list.get(m).one + " " + list.get(m).two); 
+} 
+} 
+} 
+} 
+} 
+
+public class Pair { 
+int one; 
+int two; 
+public Pair(int o, int t) { 
+one = o; 
+two = t; 
+} 
+}
+/*Create a copy of the structure of the linked list with random pointer*/
+private Node deepCopy(Node original) { 
+		// We use the following map to associate newly created instances 
+		// of Node with the instances of Node in the original list 
+		Map<Node, Node> map = new HashMap<Node, Node>(); 
+		// We scan the original list and for each Node x we create a new 
+		// Node y whose data is a copy of x's data, then we store the 
+		// couple (x,y) in map using x as a key. Note that during this 
+		// scan we set y.next and y.random to null: we'll fix them in 
+		// the next scan 
+		Node x = original; 
+		while (x != null) { 
+			Node y = new Node(); 
+			y.setData(new String(x.getData())); 
+			y.setNext(null); 
+			y.setRandom(null); 
+			map.put(x, y); 
+			x = x.getNext(); 
+		} 
+		// Now for each Node x in the original list we have a copy y 
+		// stored in our map. We scan again the original list and 
+		// we set the pointers buildings the new list 
+		x = original; 
+		while (x != null) { 
+			// we get the node y corresponding to x from the map 
+			Node y = map.get(x); 
+			// let x' = x.next; y' = map.get(x') is the new node 
+			// corresponding to x'; so we can set y.next = y' 
+			y.setNext(map.get(x.getNext())); 
+			// let x'' = x.random; y'' = map.get(x'') is the new 
+			// node corresponding to x''; so we can set y.random = y'' 
+			y.setRandom(map.get(x.getRandom())); 
+			x = x.getNext(); 
+		} 
+		// finally we return the head of the new list, that is the Node y 
+		// in the map corresponding to the Node original 
+		return map.get(original); 	
+	}
+	
 /*Check if a string is concatenaion of  strings in a given dictionary*/
 public void findConcatenations(String key){
 		
