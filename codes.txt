@@ -1,3 +1,15 @@
+/*Palindrome Permutation using HashMap*//Permutation Palindrome*/
+HashMap<Character,Integer> map = new HashMap<Character, Integer>();
+    for (int i = 0; i < s.length(); i++){
+        if (map.containsKey(s.charAt(i))){
+            map.remove(s.charAt(i));
+        }else{
+            map.put(s.charAt(i), 1);
+        }
+    }
+    if (map.size() > 1) return false;
+    else return true;
+    
 /*Find the power set of a set*/
 public static <T> List<List<T>> powerset(Collection<T> list) {
   List<List<T>> ps = new ArrayList<List<T>>();
