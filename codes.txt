@@ -1,3 +1,146 @@
+/*Unique paths from top right of matrix to bottom left / can only travel right and down*/
+public class Solution {
+    public int uniquePaths(int m, int n) {
+        int [][]matrix = new int[m][n];
+        matrix[0][0]=1;
+        for(int i=0; i<m; i++)
+        {
+            for(int j=0; j<n ;j++)
+            {
+                if(i==0 &&j!=0)
+                {
+                    matrix[i][j]+=matrix[i][j-1];
+                }
+                else if(i!=0&&j==0)
+                {
+                    matrix[i][j]+=matrix[i-1][j];
+                }
+                else if(i!=0&&j!=0)
+                {
+                    matrix[i][j] = matrix[i][j-1]+matrix[i-1][j];
+                }
+            }
+        }
+        return matrix[m-1][n-1];
+    }
+}
+/* Unique path sum with obstacles*/
+public class Solution {
+    public int uniquePathsWithObstacles(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        if(matrix[0][0]==1 || matrix[m-1][n-1]==1)
+            return 0;
+        else
+            matrix[0][0]=-1;
+        
+        
+        for(int i=0; i<m ;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                if(matrix[i][j]==1)
+                    continue;
+                if(i==0&&j!=0&&matrix[i][j-1]!=1)
+                    matrix[i][j]+=matrix[i][j-1];
+                else if(i!=0&&j==0&&matrix[i-1][j]!=1)
+                    matrix[i][j]+=matrix[i-1][j];
+                else if(i!=0&&j!=0)
+                {
+                    if(matrix[i][j-1]!=1)
+                        matrix[i][j]=matrix[i][j-1];
+                    if(matrix[i-1][j]!=1)
+                        matrix[i][j]=matrix[i][j]+matrix[i-1][j];
+                }
+                    
+            }
+        }
+        return 0-matrix[m-1][n-1];
+    }
+}
+/*First Missing Positive /optimal solution*/
+public class Solution {
+    public int firstMissingPositive(int[] nums) {
+        if(nums == null || nums.length ==0)
+        return 1;
+        int i = 0, n = nums.length;
+    while (i < n) {
+        // If the current value is in the range of (0,length) and it's not at its correct position, 
+        // swap it to its correct position.
+        // Else just continue;
+        if (nums[i] >= 0 && nums[i] < n && nums[nums[i]] != nums[i])
+            swap(nums, i, nums[i]);
+        else
+            i++;
+    }
+    int k = 1;
+
+    // Check from k=1 to see whether each index and value can be corresponding.
+    while (k < n && nums[k] == k)
+        k++;
+
+    // If it breaks because of empty array or reaching the end. K must be the first missing number.
+    if (n == 0 || k < n)
+        return k;
+    else   // If k is hiding at position 0, K+1 is the number. 
+        return nums[0] == k ? k + 1 : k;
+    }
+    private void swap(int[] nums, int i, int j) {
+    int temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+}
+}
+/* Minimum size subarray sum / minimum sum subarray equals to target value*/
+public class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        if(nums==null || nums.length==0)
+            return 0;
+        int i=0, j=0, sum=0, min = Integer.MAX_VALUE;
+        while(j<nums.length)
+        {
+            sum = sum+nums[j++];
+            while(sum>=s)
+            {
+                min = Math.min(min, j-i);
+                sum=sum-nums[i++];
+            }
+        }
+        return min==Integer.MAX_VALUE ? 0 : min;
+    }
+}
+/* Longest Consecutive Sequence in an array*/
+public class Solution {
+    public int longestConsecutive(int[] nums) {
+        if(nums==null || nums.length==0)
+            return 0;
+        int longest = 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for(int i=0; i<nums.length;i++)
+        {
+            if(map.containsKey(nums[i]))
+                continue;
+            map.put(nums[i],1);
+            
+            int begin = nums[i];
+            int end = nums[i];
+            
+            if(map.containsKey(nums[i]+1))
+                end = nums[i]+ map.get(nums[i]+1);
+            
+            if(map.containsKey(nums[i]-1))
+                begin = nums[i] - map.get(nums[i]-1);
+                
+            longest=Math.max(longest, end-begin+1);
+            
+            map.put(end, end-begin+1);
+            map.put(begin, end-begin+1);
+        }
+        return longest;
+    }
+}
+
+
 /*Spiral Matrix*/
 public class Solution {
     public List<Integer> spiralOrder(int[][] matrix) {
