@@ -1,3 +1,15 @@
+
+/*Function to generate a number with equal probability*/
+public static int f29() {
+	int start = 0;
+	int randomPick = 0;
+	while (start <= 29) {
+		randomPick += f1();
+		start++;
+	}
+	return randomPick;
+}
+
 /*Unique paths from top right of matrix to bottom left / can only travel right and down*/
 public class Solution {
     public int uniquePaths(int m, int n) {
