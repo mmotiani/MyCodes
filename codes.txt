@@ -1,3 +1,483 @@
+/*Check if Edit distance between two strings is 1 or lesser*/
+
+public boolean getEditDistance(String s1, String s2){
+	if(s1.length()-s2.length()>1)	
+		return false;
+	int count=0;
+	int i=0,j=0;
+	int m = s1.length(), n = s2.length();
+	while(i<m && j<n){
+		if(s1.charAt(i)!=s2.charAt(j)){
+			if(count==1)
+				return false;
+			if(m<n)
+				j++;
+			else if (n<m)
+				i++;
+			else
+				i++;
+				j++;
+			count++;
+		} else{
+		}
+			i++;
+			j++;
+	}
+	if(i<m||j<n)
+		count++;
+	return count==1;
+}
+
+/*Reverse an array without affecting special characters*/
+
+public char[] reverseArray(char[] arr){
+	if(arr==null||arr.length==0) return arr;
+	int start =0;
+	int end = arr.length-1;
+	char temp = null;
+	while(start<end){
+		char firstChar = arr[start];
+		char lastChar = arr[end];
+		if(Character.isLetter(firstChar) && Character.isLetter(lastChar)){
+			temp = firstChar;
+			arr[start] = lastChar;
+			arr[end] = temp;
+			start++;
+			end--;
+		}else if(!Character.isLetter(firstChar)){
+			start++;
+		}else if(!Character.isLetter(lastChar)){
+			end--;
+		}
+	}
+	return arr;
+}	
+
+/*Isomorphic strings*/
+
+public boolean checkIsomorphism(String s1, String s2){
+	if(s1.lenght()!=s2.length())
+		return false;
+	StringBuilder sb = new StringBuilder();
+	HashMap<Character,Character> map = new HashMap<>();
+
+	for(int i=0;i<s1.length();i++){
+		if(!map.containsKey(s1.charAt(i)) && !map.containsValue(s2.charAt(i))){
+			map.put(s1.charAt(i),s2.charAt(i));
+		}
+	}
+	for(int i=0;i<s1.length();i++){
+		sb.append(map.get(s1.charAt(i)));
+	}
+	return sb.toString().equals(s2);
+}
+
+/*Remove spaces from a string*/
+/*Example: "g ee ks for   gee k s"*/
+    
+public static String removeSpaces(String str){
+	int space = 0;
+	System.out.println(space);
+	int j;
+	char[] s = str.toCharArray();
+	for(j=0;j<s.length;j++){
+		if(s[j]!=' '){
+			s[space] = s[j];
+			space++;
+		}		
+	}
+	System.out.println(space);
+	return String.valueOf(s).substring(0,space);
+}
+
+/*Recursively print all sentences that can be formed from list of word lists*/
+
+public class HelloWorld{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		String[][] input = {{"you","we"},{"have", "are"},{"sleep", "eat", "drink"}};
+		formStrings(input,0,new int[input.length]);
+	}
+	
+	public static void formStrings(String[][] input, int i, int[] output){
+		if(i>=input.length){
+			for(int k=0;k<input.length;k++){
+				System.out.print(input[k][output[k]]+" ");
+			}
+			System.out.println();
+			return;
+		}
+		for(int k=0;k<input[i].length;k++){
+			output[i]=k;
+			formStrings(input,i+1,output);
+		}
+	}
+}
+
+/*Check if robot is moving in a circular path*/
+#define N 0
+#define E 1
+#define S 2
+#define W 3
+ 
+// This function returns true if the given path is circular, else false
+bool isCircular(char path[])
+{
+  // Initialize starting point for robot as (0, 0) and starting
+  // direction as N North
+  int x = 0, y = 0;
+  int dir = N;
+ 
+  // Travers the path given for robot
+  for (int i=0; path[i]; i++)
+  {
+      // Find current move
+      char move = path[i];
+ 
+      // If move is left or right, then change direction
+      if (move == 'R')
+        dir = (dir + 1)%4;
+      else if (move == 'L')
+        dir = (4 + dir - 1)%4;
+ 
+      // If move is Go, then change  x or y according to
+      // current direction
+      else // if (move == 'G')
+      {
+         if (dir == N)
+            y++;
+         else if (dir == E)
+            x++;
+         else if (dir == S)
+            y--;
+         else // dir == W
+            x--;
+      }
+  }
+ 
+   // If robot comes back to (0, 0), then path is cyclic
+  return (x == 0 && y == 0);
+}
+
+/*Longest substring with k unique characters*/
+public static String maxSubStringKUniqueChars(String s, int k) {
+	//declare a counter
+	HashMap<Character, Integer> map = new HashMap<Character, Integer>();		
+	int start = 0;
+	int maxLen = 0;
+	String maxSubstring = null;
+ 
+	for (int i = 0; i < s.length(); i++) {
+		//add each char to the counter
+		char c = s.charAt(i);
+		if(map.containsKey(c)){
+			map.put(c, map.get(c)+1);
+		}else{
+			map.put(c, 1);
+		}
+ 
+		if(map.size() == k+1){
+			//get maximum
+			int range = i-start;
+			if(range > maxLen){
+				maxLen = range;
+				maxSubstring = s.substring(start, i);
+			}
+ 
+			//move left cursor toward right, so that substring contains only k chars
+			while(map.size()>k){
+				char first = s.charAt(start);
+				int count = map.get(first);
+				if(count>1){
+					map.put(first,count-1);
+				}else{
+					map.remove(first);
+				}
+				start++;
+			}
+		}
+	}
+ 
+	if (map.size() == k && maxLen == 0) {
+		return s;
+	}
+ 
+	return maxSubstring;
+}
+
+/*Find maximum depth of braces*/
+public class HelloWorld{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+	    System.out.println(findDepthOfBraces("( p((q)) ((s)t) )"));
+	}
+	
+	public static int findDepthOfBraces(String s){
+	    int max=0;
+	    int curMax=0;
+	    for(int i=0;i<s.length();i++){
+	        if(s.charAt(i)=='('){
+	            curMax++;
+	        }else if(s.charAt(i)==')'){
+	            if(curMax==-1){
+	                   return -1;
+	            }
+	            max = Math.max(curMax,max);
+	            curMax--;
+	        }
+	    }
+	    return max;
+	}
+}
+
+/*Reverse of a string using recursion*/
+public String reverseString(String s){
+	if(s.length()<2){
+		return s;
+	}
+	return reverseString(s.substring(1))+s.charAt(0);
+}
+
+/*Return the first non-repeating character in a string*/
+public char firstNonRepeatingChar(String s){
+	if(s.length()==0||s==null) return '\0';
+	HashMap<Character,Integer> map = new HashMap<>();
+	for(int i=0;i<s.length();i++){
+		char cur = s.charAt(i);
+		map.put(cur,map.getOrDefault(cur,0)+1);
+	}
+	for(int i=0;i<s.length();i++){
+		if(map.get(s.charAt(i))==1)
+			return s.charAt(i);
+	}
+	return '\0';
+}
+
+/*Reverse words in a string*/
+public String reverseWords(String s){
+	if(s.length()==0||s==null) return s;
+	String[] words = s.split("\\s+");
+	StringBuilder sb = new StringBuilder();
+	int i;
+	for(i = words.length-1;i>0;i--){
+		sb.append(words[i]).append(" ");
+	}
+	sb.append(words[i]);
+	return sb.toString();
+}
+
+/*Length encoding*/
+public String encodeStringLength(String s){
+	if(s.length()==0||s==null) return s;
+	char cur =s.charAt(0);
+	int count =1;
+	StringBuilder sb = new StringBuilder();
+	for(int i=1;i<s.length();i++){
+		if(s.charAt(i)==cur)
+			count++;
+		else{
+			sb.append(cur).append(count);
+			count=1;
+			cur=s.charAt(i);
+		}
+	}
+	sb.append(cur).append(count);
+	return sb.toString();
+}
+
+
+/*Find the smallest window in a string containing all characters of another string*/
+public String findSmallestWindow(String s1, String s2){
+	HashMap<Character,Integer> map = new HashMap<>();
+
+	for(int i=0;i<s2.length();i++){
+		map.put(s2.charAt(i),map.getOrDefault(s.charAt(i),0)+1);
+	}
+	int left = 0;
+	int minLeft=0;
+	int minLen = s.length()-1;
+	int count =0;
+	for(int right=0;right<s1.length();right++){
+		char cur = s1.charAt(right);
+		if(map.containsKey(cur)) {
+			map.put(cur,map.get(cur)-1);
+		}
+		if(map.get(cur)>=0){
+			count++;
+		}
+		while(count==s2.length()){
+			if(right-left+1 < minLen ){
+				minLen = right-left+1;
+				minLeft = left;
+			}
+			if(map.containsKey(s.charAt(left))){
+				map.put(s.charAt(left),map.get(s.charAt(left))+1);
+				if(map.get(s.charAt(left))>0)
+					count--;
+			}
+			left++;
+		}
+	}
+
+}
+
+/*Find all permutations with repition of characters*/
+private static void printPermutationOfStrings(String str){
+  printPermutation(str, "");
+ }
+  
+ private static void printPermutation(String str, String stringToPrint){
+  if(stringToPrint.length()==str.length()){
+   System.out.println(stringToPrint);
+   return;
+  }
+  for (int i = 0; i < str.length(); i++) {
+   printPermutation(str, stringToPrint + str.charAt(i));
+  }
+ }
+
+ /*Find all permutations without repition of characters*/
+
+  
+ private  void permutation(String string) {
+  printPermutation(string,"");
+ }
+ 
+ private  void printPermutation(String string, String permutation) {
+   
+  if(string.length()==0){
+   System.out.println(permutation);
+   return;
+  }
+   
+  for (int i = 0; i < string.length(); i++) {
+   char toAppendToPermutation = string.charAt(i);
+   String remaining = string.substring(0, i) + string.substring(i + 1);
+    
+   printPermutation( remaining,  permutation + toAppendToPermutation);
+  }  
+ }
+ 
+}
+
+
+/*Check if interleaving two strings forms the third string*/
+public class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if(s1.length()+s2.length()!=s3.length())
+            return false;
+        
+        boolean[][] matrix = new boolean[s2.length()+1][s1.length()+1];
+        matrix[0][0] = true;
+        for(int i=1;i<matrix[0].length;i++){
+            matrix[0][i] = matrix[0][i-1]&&(s1.charAt(i-1)==s3.charAt(i-1));
+        }
+        for(int i=1;i<matrix.length;i++){
+            matrix[i][0] = matrix[i-1][0] &&(s2.charAt(i-1)==s3.charAt(i-1));
+        }
+        
+        for(int i=1;i<matrix.length;i++){
+            for(int j=1;j<matrix[0].length;j++){
+                matrix[i][j] = (matrix[i-1][j]&&(s2.charAt(i-1)==s3.charAt(i+j-1)))||(matrix[i][j-1]&&(s1.charAt(j-1)==s3.charAt(i+j-1)));
+            }
+        }
+        return matrix[matrix.length-1][matrix[0].length-1];
+    }
+}
+
+/*Print all the interleavings of two strings*/
+public static void printInterleavings(String s1,String s2){
+		ArrayList<String> result = new ArrayList<>();
+  		printInterleavings(s1,s2,"",result);
+  		System.out.println(result);
+	}
+	
+	
+	public static void printInterleavings(String s1,String s2,String soFar,ArrayList<String> result){
+		if((s1==null||s1.length()==0) && (s2==null||s2.length() == 0))
+			return;
+		if(s1==null || s1.length()==0){
+			result.add(soFar+s2);
+			return;
+		}
+		if(s2==null || s2.length()==0){
+			result.add(soFar+s1);
+			return;
+		}
+		printInterleavings(s1.substring(1), s2, soFar + s1.charAt(0),result);
+		printInterleavings(s1, s2.substring(1), soFar + s2.charAt(0),result);
+		
+	}
+/*Count number of words*/
+#define OUT 0
+#define IN  1
+ 
+// returns number of words in str
+unsigned countWords(char *str)
+{
+    int state = OUT;
+    unsigned wc = 0;  // word count
+ 
+    // Scan all characters one by one
+    while (*str)
+    {
+        // If next character is a separator, set the state as OUT
+        if (*str == ' ' || *str == '\n' || *str == '\t')
+            state = OUT;
+ 
+        // If next character is not a word separator and state is OUT,
+        // then set the state as IN and increment word count
+        else if (state == OUT)
+        {
+            state = IN;
+            ++wc;
+        }
+ 
+        // Move to next character
+        ++str;
+    }
+ 
+    return wc;
+}
+
+/*Find all the distinct palindrome substrings*/ O(n^2)
+public HashSet<String> distinctPalindromes(String s){
+    	 HashSet<String> set = new HashSet<String>();
+    	 String temp = "";
+    	 for(int i=0;i<s.length();i++){
+    		getPalindrome(s,i,i,set);
+    		getPalindrome(s,i,i+1,set);
+    	 }
+    	 return set;
+     }
+     
+     public void getPalindrome(String s, int begin, int end, HashSet<String> set){
+    	 while(begin>=0 && end<=s.length()-1 && s.charAt(begin)==s.charAt(end)){
+    		 set.add(s.substring(begin,end+1));
+    		 begin--;
+    		 end++;
+    	 }
+    	 
+     }
+
+
+/*Check if one string is a subsequence of another*/
+
+  public static boolean checkSubsequence(String s1, String s2){
+  	if(s1.length()>s2.length()) return false;
+    
+    int i=0;
+    for(int j=0;j<s2.length()&&i<s1.length();j++){
+    	char s1Char = s1.charAt(i);
+      	char s2Char = s2.charAt(j);
+      	if(s1Char==s2Char)
+          i++;      
+    }
+    if(i<s1.length())
+      	return false;
+    return true;
+  }
+  
 /*word ladder */
 
 public class Solution {
