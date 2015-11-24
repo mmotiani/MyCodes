@@ -1,3 +1,4 @@
+
 /*Check if Edit distance between two strings is 1 or lesser*/
 
 public boolean getEditDistance(String s1, String s2){
@@ -10957,6 +10958,55 @@ public class Solution {
         }
         return false;
     }
+}
+/* Find the minimum set of ranges for a target range
+This should run in O(nlogn) time. The bottleneck is in sorting the array. The rest of the algorithm runs in O(n) */*/
+List<Interval> smallestSetOfRanges(List<Interval> ranges, Interval R) {
+	List<Interval> result;
+	int target, i, maxTarget, maxIndex;
+	boolean match=false;
+
+	if (R.first == R.second) {
+		for (i = 0; i < ranges.size(); i++) {
+			if (ranges.get(i).first <= R.first && ranges.get(i).second >= R.second) {
+				result.add(ranges.get(i);
+				break;
+			}
+		}
+		return result;
+	}
+
+	Collections.sort(ranges, new Comparator<Interval>(){
+		@Override
+		public int compare(Interval i1, Interval i2){
+			return Integer.compare(i1.first,i2.first);
+		}
+	});
+
+	target = R.first;
+	maxIndex = 0;
+	while (target < R.second) {
+		match = false;
+		maxTarget = target;
+		for (i = maxIndex; i < ranges.size(); i++) {
+			if (ranges.get(i).first <= target && ranges.get(i).second >= maxTarget) {
+				match = true;
+				maxTarget = ranges.get(i).second;
+				maxIndex = i;
+			} else if (ranges.get(i).first > target) {
+				break;
+			}
+		}
+		if (match == false) {
+			result.clear();
+			break;
+		}
+		result.add(ranges.get(maxIndex);
+		target = maxTarget;
+		maxIndex++;
+	}
+
+	return result;
 }
 /* Find the minimum set of ranges for a target range
 This should run in O(nlogn) time. The bottleneck is in sorting the array. The rest of the algorithm runs in O(n) */
