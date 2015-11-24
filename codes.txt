@@ -1,3 +1,1076 @@
+/* Cost of concatenating string / cost of string concatenation*/
+public class MinimumCost {
+    public static void main(String[] args) {
+        ArrayList<String> s = new ArrayList<String>();
+        s.add("abcd");
+        s.add("def");
+        s.add("gh");
+        s.add("jh");
+        System.out.println(getCost(s)); //Prints 22 for the above list
+    }
+    public static int getCost(ArrayList<String> s){
+        int cost = 0;
+        Collections.sort(s, new MySort()); //Sort the list according to length of the string
+        while (s.size() != 1){ //Repeat until the list got one final string out of all the strings
+            cost = cost + s.get(0).length() + s.get(1).length();
+            String tmp = s.get(0) + s.get(1);
+            s.remove(0);
+            s.remove(0); // Remove the top 2 strings as they are concatenated now
+            s.add(tmp); // Add the concatenated string to the list
+            Collections.sort(s, new MySort()); //Sort the list again after concatenation
+            }
+        return cost;
+    }
+    static class MySort implements Comparator<String> {
+        @Override
+        public int compare(String s1, String s2) {
+            if (s1.length() < s2.length())
+                return -1;
+            if (s1.length() > s2.length())
+                return 1;
+            return 0;
+
+        }
+    }
+
+}
+
+/*Function to generate the number of equal probability  given f(1) generates 0 and 1 with equal probability.*/
+public static int f29() {
+	int start = 0;
+	int randomPick = 0;
+	while (start <= 29) {
+		randomPick += f1();
+		start++;
+	}
+	return randomPick;
+}
+
+/* Search in 2D matrix with rows in ascending and column is also ascending / Search a 2D Matrix II*/
+public class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if(matrix == null || matrix.length < 1 || matrix[0].length <1) {
+            return false;
+        }
+        int col = matrix[0].length-1;
+        int row = 0;
+        while(col >= 0 && row <= matrix.length-1) {
+            if(target == matrix[row][col]) {
+                return true;
+            } else if(target < matrix[row][col]) {
+                col--;
+            } else if(target > matrix[row][col]) {
+                row++;
+            }
+        }
+        return false;
+    }
+}
+/* longest increasing Subsequence. O(n2)*/
+public class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int N = nums.length;
+        if (N == 0) return 0;
+        int[] dp = new int[N];
+        Arrays.fill(dp, 1);
+        int res = 1;
+        for (int i = 1; i < N; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) {
+                    dp[i] = Math.max(dp[j] + 1, dp[i]);
+                }
+            }
+            res = Math.max(res, dp[i]);
+        }
+        return res;   
+    }
+}
+/* longest increasing Subsequence. O(n log n)*/
+public class Solution {
+    public int lengthOfLIS(int[] nums) {
+         if (nums.length == 0) return 0;
+        int len = 0, N = nums.length;
+        int[] tailTable = new int[N];   
+        tailTable[len++] = nums[0];
+        for (int i = 1; i < N; i++) {
+            if (nums[i] < tailTable[0]) tailTable[0] = nums[i];
+            else if (nums[i] > tailTable[len - 1]) tailTable[len++] = nums[i];
+            else {
+                tailTable[binarySearch(tailTable, 0, len - 1, nums[i])] = nums[i];
+            }
+        }
+        return len;
+    }
+    private int binarySearch(int[] tails, int start, int end, int target) {
+        while (start < end) {
+            int mid = start + (end - start)/2;
+            if (tails[mid] >= target) end = mid;
+            else start = mid + 1;
+        }
+        return end;
+    }
+}
+/* Make all possible subsets (with duplicates)/ Subsets II*/
+public class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+    List<List<Integer>> res = new ArrayList<>();
+    List<Integer> each = new ArrayList<>();
+    helper(res, each, 0, nums);
+    return res;
+    }
+    public void helper(List<List<Integer>> res, List<Integer> each, int pos, int[] n) {
+    if (pos <= n.length) {
+        res.add(each);
+    }
+    int i = pos;
+    while (i < n.length) {
+        each.add(n[i]);
+        helper(res, new ArrayList<>(each), i + 1, n);
+        each.remove(each.size() - 1);
+        i++;
+        while (i < n.length && n[i] == n[i - 1]) {i++;}
+    }
+    return;
+}
+}
+/* Range Sum - Immutable*/
+public class NumArray {
+int[] sum;
+    public NumArray(int[] nums) {
+        sum = new int[nums.length];
+        if(nums.length>0)
+            sum[0]=nums[0];
+        for(int i=1; i<nums.length; i++)
+        {
+            sum[i]=sum[i-1]+nums[i];
+        }
+    }
+
+    public int sumRange(int i, int j) 
+    {
+         if(i==0)
+            return sum[j];
+        return sum[j]-sum[i-1];
+    }
+}
+
+
+// Your NumArray object will be instantiated and called as such:
+// NumArray numArray = new NumArray(nums);
+// numArray.sumRange(0, 1);
+// numArray.sumRange(1, 2);
+/* Partition List / divide list such that elements less than target are at the left of list and more after the target
+the basic idea is to maintain two queues, the first one stores all nodes with val less than x , and the second queue stores all the rest nodes. Then concat these two queues. Remember to set the tail of second queue a null next, or u will get TLE.
+*/
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode partition(ListNode head, int x) {
+        ListNode dummy1 = new ListNode(0), dummy2 = new ListNode(0);  //dummy heads of the 1st and 2nd queues
+    ListNode curr1 = dummy1, curr2 = dummy2;      //current tails of the two queues;
+    while (head!=null){
+        if (head.val<x) {
+            curr1.next = head;
+            curr1 = head;
+        }else {
+            curr2.next = head;
+            curr2 = head;
+        }
+        head = head.next;
+    }
+    curr2.next = null;          //important! avoid cycle in linked list. otherwise u will get TLE.
+    curr1.next = dummy2.next;
+    return dummy1.next;
+    }
+}
+/*find the starting and ending index of an element in the sorted array / Search for a range*/
+public class Solution {
+    public int[] searchRange(int[] A, int target) {
+        int[] range = {A.length, -1};
+        searchRange(A, target, 0, A.length - 1, range);
+        if (range[0] > range[1]) range[0] = -1; 
+        return range;
+    }
+     public void searchRange(int[] A, int target, int left, int right, int[] range) {
+        if (left > right) return;
+        int mid = left + (right - left) / 2;
+        if (A[mid] == target) {
+            if (mid < range[0]) {
+                range[0] = mid;
+                searchRange(A, target, left, mid - 1, range);
+            }
+            if (mid > range[1]) {
+                range[1] = mid;
+                searchRange(A, target, mid + 1, right, range);
+            }
+        } else if (A[mid] < target) {
+            searchRange(A, target, mid + 1, right, range);
+        } else {
+            searchRange(A, target, left, mid - 1, range);
+        }
+    }
+}
+
+/*Sort a list using Insertion Sort */
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        ListNode curr = head, next = null;
+  // l is a fake head
+  ListNode l = new ListNode(0);
+
+  while (curr != null) {
+    next = curr.next;
+
+    ListNode p = l;
+    while (p.next != null && p.next.val < curr.val)
+      p = p.next;
+
+    // insert curr between p and p.next
+    curr.next = p.next;
+    p.next = curr;
+    curr = next;
+  }
+
+  return l.next;
+    }
+}
+/* Divide two integers without using multiplication, modulus and divide operation / divide 2 integers*/
+public class Solution {
+    public int divide(int dividend, int divisor) {
+        //Reduce the problem to positive long integer to make it easier.
+    //Use long to avoid integer overflow cases.
+    int sign = 1;
+    if ((dividend > 0 && divisor < 0) || (dividend < 0 && divisor > 0))
+        sign = -1;
+    long ldividend = Math.abs((long) dividend);
+    long ldivisor = Math.abs((long) divisor);
+
+    //Take care the edge cases.
+    if (ldivisor == 0) return Integer.MAX_VALUE;
+    if ((ldividend == 0) || (ldividend < ldivisor)) return 0;
+
+    long lans = ldivide(ldividend, ldivisor);
+
+    int ans;
+    if (lans > Integer.MAX_VALUE){ //Handle overflow.
+        ans = (sign == 1)? Integer.MAX_VALUE : Integer.MIN_VALUE;
+    } else {
+        ans = (int) (sign * lans);
+    }
+    return ans;
+    }
+    
+    private long ldivide(long ldividend, long ldivisor) {
+    // Recursion exit condition
+    if (ldividend < ldivisor) return 0;
+
+    //  Find the largest multiple so that (divisor * multiple <= dividend), 
+    //  whereas we are moving with stride 1, 2, 4, 8, 16...2^n for performance reason.
+    //  Think this as a binary search.
+    long sum = ldivisor;
+    long multiple = 1;
+    while ((sum+sum) <= ldividend) {
+        sum += sum;
+        multiple += multiple;
+    }
+    //Look for additional value for the multiple from the reminder (dividend - sum) recursively.
+    return multiple + ldivide(ldividend - sum, ldivisor);
+}
+}
+/* Course Schedule*/
+public class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        ArrayList[] graph = new ArrayList[numCourses];
+            for(int i=0;i<numCourses;i++)
+                graph[i] = new ArrayList();
+
+            boolean[] visited = new boolean[numCourses];
+            for(int i=0; i<prerequisites.length;i++){
+                graph[prerequisites[i][1]].add(prerequisites[i][0]);
+            }
+
+            for(int i=0; i<numCourses; i++){
+                if(!dfs(graph,visited,i))
+                    return false;
+            }
+            return true;
+    }
+    private boolean dfs(ArrayList[] graph, boolean[] visited, int course){
+            if(visited[course])
+                return false;
+            else
+                visited[course] = true;;
+
+            for(int i=0; i<graph[course].size();i++){
+                if(!dfs(graph,visited,(int)graph[course].get(i)))
+                    return false;
+            }
+            visited[course] = false;
+            return true;
+        }
+}
+/* maximum product subarray / max product sub array
+Loop through the array, each time remember the max and min value for the previous product, the most important thing is to update the max and min value: we have to compare among max * A[i], min * A[i] as well as A[i], since this is product, a negative * negative could be positive.
+*/
+public class Solution {
+    public int maxProduct(int[] A) {
+        if (A == null || A.length == 0) {
+            return 0;
+        }
+        int max = A[0], min = A[0], result = A[0];
+        for (int i = 1; i < A.length; i++) {
+            int temp = max;
+            max = Math.max(Math.max(max * A[i], min * A[i]), A[i]);
+            min = Math.min(Math.min(temp * A[i], min * A[i]), A[i]);
+            if (max > result) {
+                result = max;
+            }
+        }
+        return result;
+    }
+}
+/*All gray codes of a number I Solution*/
+public class Solution {
+    public List<Integer> grayCode(int n) {
+        List<Integer> result = new LinkedList<>();
+    for (int i = 0; i < 1<<n; i++) result.add(i ^ i>>1);
+    return result;
+    }
+}
+/* All gray codes of a number II solution*/
+public class Solution {
+   //analyze the pattern
+//n=0  -> 0
+//n=1  -> 0, 1
+//n=2  -> (00,  01),  (10,  11)
+//n=3  -> (000, 001, 010, 011), (111, 110, 101, 100)
+
+//so the pattern is when n=n  -> add 0 in front of all the result of (n-1)'s binary value (This is just same as all the result of (n-1)
+//                               and add 1 in front of all the result of(n-1)'s binary value (This need to calculate.)
+
+
+public List<Integer> grayCode(int n) {
+    List<Integer> result = new ArrayList();
+    result.add(0);
+
+    for(int i=1; i<=n; i++){
+        int front=1;
+        //Create the correct value for binary format (10...0) which the value has i digi
+        //so shift 1 to right (i-1) times
+        for(int j=1; j<i; j++){
+            front = front<<1;
+        }
+
+        //add the new generated value to the result list
+        //the new generated value is the last result add front value
+        int size=result.size();
+        //we want to loop through the (n-1) result from end to start. This is just because want to make the test case match the Leetcode answer. You can use other way loop through the (n-1) result.
+        for(int k=size-1; k>=0; k--){
+            result.add(result.get(k)+front);
+        }
+    }
+
+    return result;
+}
+}
+/* Container with most water 
+1.	Start with pointer left=0 and pointer right=length-1
+2.	The max water is limited by the pointer with smaller height
+3.	When moving a pointer, the width of the area decrease
+4.	If we move the pointer with higher height, we will never get a greater area, the max height will be at most the one of the pointer with smaller height.
+5.	So we need to move the pointer with smaller height to have a chance to get higher height at the next step.
+*/
+public class Solution {
+    public int maxArea(int[] height) {
+        int left = 0, right = height.length - 1;
+    int maxArea = 0;
+
+    while (left < right) {
+        maxArea = Math.max(maxArea, Math.min(height[left], height[right])
+                * (right - left));
+        if (height[left] < height[right])
+            left++;
+        else
+            right--;
+    }
+
+    return maxArea;
+    }
+}
+
+/*Number of Islands */
+public class Solution {
+    public int numIslands(char[][] grid) {
+         int count = 0;
+        for(int i = 0; i < grid.length; i++){
+            for(int j = 0; j < grid[i].length; j++){
+                /*find a cell belong to an island, then disappear the whole 
+                  island and increase count*/
+                if(grid[i][j] == '1'){
+                    disappear(i,j,grid);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+     //Use for disapearing an island
+    public void disappear(int i, int j, char[][] grid){
+        //array edge detect
+        if(i < 0 || i >= grid.length){
+            return;
+        }
+        if(j < 0 || j >= grid[i].length){
+            return;
+        }
+        //island edge detect
+        if(grid[i][j] == '0'){
+            return;
+        }
+
+        //disapear this cell
+        grid[i][j] = '0';
+        //disapear other cell in the same island
+        disappear(i + 1, j, grid);
+        disappear(i - 1, j, grid);
+        disappear(i, j + 1, grid);
+        disappear(i, j - 1, grid);
+    }
+}
+/*First N ugly numbers 
+The ugly-number sequence is 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, … because every number can only be divided by 2, 3, 5, one way to look at the sequence is to split the sequence to three groups as below:
+(1) 1×2, 2×2, 3×2, 4×2, 5×2, …
+(2) 1×3, 2×3, 3×3, 4×3, 5×3, …
+(3) 1×5, 2×5, 3×5, 4×5, 5×5, …
+We can find that every subsequence is the ugly-sequence itself (1, 2, 3, 4, 5, …) multiply 2, 3, 5.
+Then we use similar merge method as merge sort, to get every ugly number from the three subsequence.
+Every step we choose the smallest one, and move one step after,including nums with same value.
+
+*/
+public class Solution {
+    public int nthUglyNumber(int n) {
+        int[] ugly = new int[n];
+        ugly[0] = 1;
+        int index2 = 0, index3 = 0, index5 = 0;
+        int factor2 = 2, factor3 = 3, factor5 = 5;
+        for(int i=1;i<n;i++){
+            int min = Math.min(Math.min(factor2,factor3),factor5);
+            ugly[i] = min;
+            if(factor2 == min)
+                factor2 = 2*ugly[++index2];
+            if(factor3 == min)
+                factor3 = 3*ugly[++index3];
+            if(factor5 == min)
+                factor5 = 5*ugly[++index5];
+        }
+        return ugly[n-1];   
+    }
+}
+/*Permutation Sequence / kth permutation for the given number*/
+public class Solution {
+    public String getPermutation(int n, int k) {
+        LinkedList<Integer> notUsed = new LinkedList<Integer>();
+
+    int weight = 1;
+
+    for (int i = 1; i <= n; i++) {
+        notUsed.add(i);
+        if (i == n)
+            break;
+        weight = weight * i;
+    }
+
+    String res = "";
+    k = k - 1;
+    while (true) {
+        res = res + notUsed.remove(k / weight);
+        k = k % weight;
+        if (notUsed.isEmpty())
+            break;
+        weight = weight / notUsed.size();
+    }
+
+    return res;
+    }
+}
+/*Merge two lists/ merge linked list / merge list / merge 2 lists /merge 2 linked list */
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null)
+      return head;
+
+    // step 1. cut the list to two halves
+    ListNode prev = null, slow = head, fast = head;
+
+    while (fast != null && fast.next != null) {
+      prev = slow;
+      slow = slow.next;
+      fast = fast.next.next;
+    }
+
+    prev.next = null;
+
+    // step 2. sort each half
+    ListNode l1 = sortList(head);
+    ListNode l2 = sortList(slow);
+
+    // step 3. merge l1 and l2
+    return merge(l1, l2);
+    }
+    
+    ListNode merge(ListNode l1, ListNode l2) {
+    ListNode l = new ListNode(0), p = l;
+
+    while (l1 != null && l2 != null) {
+      if (l1.val < l2.val) {
+        p.next = l1;
+        l1 = l1.next;
+      } else {
+        p.next = l2;
+        l2 = l2.next;
+      }
+      p = p.next;
+    }
+
+    if (l1 != null)
+      p.next = l1;
+
+    if (l2 != null)
+      p.next = l2;
+
+    return l.next;
+  }
+
+}
+/* Additive number / Additive number is a positive integer whose digits can form additive sequence*/
+public class Solution {
+    public boolean isAdditiveNumber(String num) {
+         String a = "";
+    String b = "";
+    for (int i = 0; i < num.length()/3; i++) {
+        a = num.substring(0, i + 1);
+        for (int j = i + 1; j < num.length(); j++) {
+            b = num.substring(i + 1, j + 1);
+            if (b.charAt(0) == '0' && b.length() > 1) {continue;}
+            if (valid(num.substring(j + 1), Long.parseLong(a), Long.parseLong(b))) {
+                return true;
+            }
+        }
+    }
+    return false;
+    }
+    public boolean valid(String str, long a, long b) {
+    long sum = a + b;
+    String tempStr = String.valueOf(sum);
+    int len = tempStr.length();
+    if (str.length() < len) {return false;}
+    if (str.length() == len && str.equals(tempStr)) {return true;}
+    if (str.substring(0, len).equals(tempStr)) {
+        return valid(str.substring(len), b, sum);
+    }
+    return false;
+}
+}
+/* Basic Calculator*/
+public class Solution {
+    public int calculate(String s) {
+        int len;
+    if(s==null || (len = s.length())==0) return 0;
+    Stack<Integer> stack = new Stack<Integer>();
+    int num = 0;
+    char sign = '+';
+    for(int i=0;i<len;i++){
+        if(Character.isDigit(s.charAt(i))){
+            num = num*10+s.charAt(i)-'0';
+        }
+        if((!Character.isDigit(s.charAt(i)) &&' '!=s.charAt(i)) || i==len-1){
+            if(sign=='-'){
+                stack.push(-num);
+            }
+            if(sign=='+'){
+                stack.push(num);
+            }
+            if(sign=='*'){
+                stack.push(stack.pop()*num);
+            }
+            if(sign=='/'){
+                stack.push(stack.pop()/num);
+            }
+            sign = s.charAt(i);
+            num = 0;
+        }
+    }
+
+    int re = 0;
+    for(int i:stack){
+        re += i;
+    }
+    return re;
+    }
+}
+/* Re-order List*/
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public void reorderList(ListNode head) {
+        if(head==null||head.next==null) return;
+
+            //Find the middle of the list
+            ListNode p1=head;
+            ListNode p2=head;
+            while(p2.next!=null&&p2.next.next!=null){ 
+                p1=p1.next;
+                p2=p2.next.next;
+            }
+
+            //Reverse the half after middle  1->2->3->4->5->6 to 1->2->3->6->5->4
+            ListNode preMiddle=p1;
+            ListNode preCurrent=p1.next;
+            while(preCurrent.next!=null){
+                ListNode current=preCurrent.next;
+                preCurrent.next=current.next;
+                current.next=preMiddle.next;
+                preMiddle.next=current;
+            }
+
+            //Start reorder one by one  1->2->3->6->5->4 to 1->6->2->5->3->4
+            p1=head;
+            p2=preMiddle.next;
+            while(p1!=preMiddle){
+                preMiddle.next=p2.next;
+                p2.next=p1.next;
+                p1.next=p2;
+                p1=p2.next;
+                p2=preMiddle.next;
+            }
+    }
+}
+/*Maximal Square / find the maximum square in a matrix filled with 0s and 1s */
+public class Solution {
+    public int maximalSquare(char[][] a) {
+        if (a == null || a.length == 0 || a[0].length == 0)
+    return 0;
+
+  int max = 0, n = a.length, m = a[0].length;
+
+  // dp(i, j) represents the length of the square 
+  // whose lower-right corner is located at (i, j)
+  // dp(i, j) = min{ dp(i-1, j-1), dp(i-1, j), dp(i, j-1) }
+  int[][] dp = new int[n + 1][m + 1];
+
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= m; j++) {
+      if (a[i - 1][j - 1] == '1') {
+        dp[i][j] = Math.min(dp[i - 1][j - 1], Math.min(dp[i - 1][j], dp[i][j - 1])) + 1;
+        max = Math.max(max, dp[i][j]);
+      }
+    }
+  }
+
+  // return the area
+  return max * max;
+    }
+}
+/*Range Sum Query – 2D / sum of a given square in matrix */
+public class NumMatrix {
+    private int[][] dp;
+    public NumMatrix(int[][] matrix) {
+        dp = matrix;
+    for (int i = 0; i < dp.length; i++) {
+        for (int j = 1; j < dp[0].length; j++) {
+            dp[i][j] += dp[i][j - 1];
+        }
+    }
+    }
+
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+          int res = 0;
+    for (int i = row1; i <= row2; i++) {
+       res += dp[i][col2];
+       if (col1 != 0) {// if col1 == 0, just calculate row2
+          res -= dp[i][col1 - 1];
+       }
+    }
+    return res;
+    }
+}
+
+
+// Your NumMatrix object will be instantiated and called as such:
+// NumMatrix numMatrix = new NumMatrix(matrix);
+// numMatrix.sumRegion(0, 1, 2, 3);
+// numMatrix.sumRegion(1, 2, 3, 4);
+/* Restore IP address from a string of digits*/
+public class Solution {
+   
+         public List<String> restoreIpAddresses(String s) {
+        List<String> res = new ArrayList<String>();
+        int len = s.length();
+        for(int i = 1; i<4 && i<len-2; i++){
+            for(int j = i+1; j<i+4 && j<len-1; j++){
+                for(int k = j+1; k<j+4 && k<len; k++){
+                    String s1 = s.substring(0,i), s2 = s.substring(i,j), s3 = s.substring(j,k), s4 = s.substring(k,len);
+                    if(isValid(s1) && isValid(s2) && isValid(s3) && isValid(s4)){
+                        res.add(s1+"."+s2+"."+s3+"."+s4);
+                    }
+                }
+            }
+        }
+    return res;
+}
+     public boolean isValid(String s){
+        if(s.length()>3 || s.length()==0 || (s.charAt(0)=='0' && s.length()>1) || Integer.parseInt(s)>255)
+            return false;
+        return true;
+    }
+
+}
+/*Contains Duplicate / Given an array of integers, find out whether there are two distinct indices i and j in the array such that the difference between nums[i] and nums[j] is at most t and the difference between i and j is at most k.
+This problem requires to maintain a window of size k of the previous values that can be queried for value ranges. The best data structure to do that is Binary Search Tree. As a result maintaining the tree of size k will result in time complexity O(N lg K). In order to check if there exists any value of range abs(nums[i] - nums[j]) to simple queries can be executed both of time complexity O(lg K)
+Here is the whole solution using TreeMap.
+ */
+public class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        if (nums == null || nums.length == 0 || k <= 0) {
+            return false;
+        }
+
+        final TreeSet<Integer> values = new TreeSet<>();
+        for (int ind = 0; ind < nums.length; ind++) {
+
+            final Integer floor = values.floor(nums[ind] + t);
+            final Integer ceil = values.ceiling(nums[ind] - t);
+            if ((floor != null && floor >= nums[ind])
+                    || (ceil != null && ceil <= nums[ind])) {
+                return true;
+            }
+
+            values.add(nums[ind]);
+            if (ind >= k) {
+                values.remove(nums[ind - k]);
+            }
+        }
+
+        return false;
+    }
+}
+/* Find permutation of collection of numbers /permutation of list of numbers with duplicates RECURSIVE
+The idea is to try to put every number at the beginning of the array, and then do the same thing for the rest of the array
+*/
+public class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+          List<List<Integer>> res = new ArrayList<List<Integer>>();
+        Arrays.sort(nums);
+        LinkedList<Integer> list = new LinkedList<Integer>();
+        for (int num : nums) list.add(num);
+        permute(list, 0, res);
+        return res;
+    }
+   private void permute(LinkedList<Integer> nums, int start, List<List<Integer>> res){
+        if (start == nums.size() - 1){
+            res.add(new LinkedList<Integer>(nums));
+            return;
+        }
+        for (int i = start; i < nums.size(); i++){
+            if (i > start && nums.get(i) == nums.get(i - 1)) continue;
+            nums.add(start, nums.get(i));
+            nums.remove(i + 1);
+            permute(nums, start + 1, res);
+            nums.add(i + 1, nums.get(start));
+            nums.remove(start);
+        }
+    }
+}
+/* Find permutation of collection of numbers /permutation of list of numbers with duplicates ITERATIVE */
+public class Solution {
+    public List<List<Integer>> permuteUnique(int[] num) {
+           Set<List<Integer>> permutations = new HashSet<List<Integer>>();
+
+        if(num.length > 0){
+            permutations.add(Arrays.asList(num[0]));
+
+            for(int index = 1; index < num.length; index++) {
+
+                Set<List<Integer>> newPermutations = new HashSet<List<Integer>>();
+                for(List<Integer> list : permutations){
+
+                    for(int innerIndex = 0; innerIndex <= list.size(); innerIndex++){
+                        List<Integer> newList = new ArrayList(list);
+                        newList.add(innerIndex, num[index]);
+                        newPermutations.add(newList);
+                    }
+                }
+
+                permutations = newPermutations;
+            }
+        }
+        return new ArrayList<List<Integer>>(permutations);
+    }
+}
+/* Remove Invalid Parentheses */
+public class Solution {
+    public List<String> removeInvalidParentheses(String s) {
+        List<String> res = new ArrayList<>();
+
+      // sanity check
+      if (s == null) return res;
+
+      Set<String> visited = new HashSet<>();
+      Queue<String> queue = new LinkedList<>();
+
+      // initialize
+      queue.add(s);
+      visited.add(s);
+
+      boolean found = false;
+
+      while (!queue.isEmpty()) {
+        s = queue.poll();
+
+        if (isValid(s)) {
+          // found an answer, add to the result
+          res.add(s);
+          found = true;
+        }
+
+        if (found) continue;
+
+        // generate all possible states
+        for (int i = 0; i < s.length(); i++) {
+          // we only try to remove left or right paren
+          if (s.charAt(i) != '(' && s.charAt(i) != ')') continue;
+
+          String t = s.substring(0, i) + s.substring(i + 1);
+
+          if (!visited.contains(t)) {
+            // for each state, if it's not visited, add it to the queue
+            queue.add(t);
+            visited.add(t);
+          }
+        }
+      }
+
+      return res;
+    }
+     // helper function checks if string s contains valid parantheses
+    boolean isValid(String s) {
+      int count = 0;
+
+      for (int i = 0; i < s.length(); i++) {
+        char c = s.charAt(i);
+        if (c == '(') count++;
+        if (c == ')' && count-- == 0) return false;
+      }
+
+      return count == 0;
+    }
+}
+/* Palindrome Partitioning in one cut RECURSIVE*/
+public class Solution {
+    int[][] panMap;
+    int[] map;
+    public int minCut(String s) {
+         panMap = new int[s.length()][s.length()];
+        map = new int[s.length() + 1];
+        Arrays.fill(map, Integer.MAX_VALUE);
+        map[s.length()] = 0;
+        return minCut(s, 0) - 1;
+    }
+     private int minCut(String s, int start) {
+        if (map[start] != Integer.MAX_VALUE) return map[start];
+        for (int i = start; i < s.length(); i++) {
+            if (isPan(s, start, i)) {
+                map[start] = Math.min(map[start], 1 + minCut(s, i + 1));
+            }
+        }
+        return map[start];
+    }
+ private boolean isPan(String s, int start, int end) {
+        if (start == end) return true;
+        if (end == start - 1 && s.charAt(start) == s.charAt(end)) return true;
+        if (panMap[start][end] != 0) return panMap[start][end] == 1 ? true : false;
+
+        if (s.charAt(start) == s.charAt(end)) {
+            panMap[start][end] = isPan(s, start + 1, end - 1) ? 1 : -1;
+        }
+        return panMap[start][end] == 1 ? true : false;
+    }
+}
+/* Palindrome Partitioning in one cut ITERATIVE */
+public class Solution {
+    public int minCut(String s) {
+    
+        if(s==null)
+            return 0;
+         int i,j,n=s.length();
+         int cuts[]=new int[n];   //cuts[i] will store the minimum no. of cuts required for substring [0...i];
+         boolean dp[][]=new boolean[n][n];   // dp[i][j]=true if substring [i...j] can be partitioned into list of palindromes.
+
+        for(i=0;i<n;i++)
+        {
+            /*since every single character is a palindrome, maximum no. of cuts for substring [0...i] will be i
+             hence initiating cuts[i] with maximum possible value. */        
+
+            cuts[i]=i; 
+            for(j=0;j<=i;j++)
+            { 
+                if(j == i)
+                   dp[j][i] = true;
+                else
+                {
+                  if(s.charAt(i)!= s.charAt(j))
+                  continue;
+                  if(j==i-1)
+
+                  dp[j][i]=true;
+                  else
+                  dp[j][i]=dp[j+1][i-1] ;
+                }
+
+              if(dp[j][i])
+              {
+                  if(j==0)
+                  cuts[i]=0;
+                  else
+                  cuts[i]=Math.min(cuts[j-1]+1,cuts[i]);  
+                 /*since dp[j][i] is a palindrome, cuts[j]+1 equals no. of cuts required in [0...i] if we include the current  word [j..i]; New cuts[i] will be equal to min of previous cuts[i] and the newly calculated cuts[i] i.e. cuts[j]+1 */
+              }
+
+
+            }
+        }
+        return cuts[n-1];
+
+    }
+}
+/* Inorder successor in a tree*/
+public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+    while (root != null && root.val <= p.val)
+        root = root.right;
+    if (root == null)
+        return null;
+    TreeNode left = inorderSuccessor(root.left, p);
+    return (left != null && left.val > p.val) ? left : root;
+}
+/* Inorder Predecessor*/
+public TreeNode predecessor(TreeNode root, TreeNode p) {
+  if (root == null)
+    return null;
+
+  if (root.val >= p.val) {
+    return predecessor(root.left, p);
+  } else {
+    TreeNode right = predecessor(root.right, p);
+    return (right != null) ? right : root;
+  }
+}
+/*Rotate LinkedList / Rotate linked list */
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        int size = 1;
+
+    if(head == null)
+        return null;
+
+    ListNode current = head;
+
+    //Count size of the list and puts current pointer at the end
+    while(current.next != null)
+    {   
+        size++;
+        current = current.next;
+    }
+
+    //To deal with the case k >= size
+    k %= size;
+
+    //Puts the head of the list next to the tail. The idea is to use this to find the new head
+    current.next = head;
+
+    //We need to iterate size - k times to find the new head.
+    for(int i = 0; i < size - k; i++)
+        current = current.next;
+
+    //Sets the new head
+    head = current.next;
+
+    //Current is the tail of our new list. Thus, this sets the null as the next node
+    current.next = null;
+
+    return head;
+
+    }
+}
+/* Reverse linked list by k-groups/ reverse linked list after every k nodes/ Reverse linked list by k groups*/
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode curr = head;
+    int count = 0;
+    while (curr != null && count != k) { // find the k+1 node
+        curr = curr.next;
+        count++;
+    }
+    if (count == k) { // if k+1 node is found
+        curr = reverseKGroup(curr, k); // reverse list with k+1 node as head
+        // head - head-pointer to direct part, 
+        // curr - head-pointer to reversed part;
+        while (count-- > 0) { // reverse current k-group: 
+            ListNode tmp = head.next; // tmp - next head in direct part
+            head.next = curr; // preappending "direct" head to the reversed list 
+            curr = head; // move head of reversed part to a new node
+            head = tmp; // move "direct" head to the next node in direct part
+        }
+        head = curr;
+    }
+    return head;
+    }
+}
+
 
 /*Check if Edit distance between two strings is 1 or lesser*/
 
