@@ -6664,7 +6664,7 @@ public class Solution{
 		TreeNode p = root, parent = null, pRight=null;
 		while(p!=null){
 		TreeNode left = p.left;
-		p.left=null;
+		p.left=pRight;
 		pRight = p.right;
 		p.right = parent;
 		parent = p;
