@@ -1,3 +1,431 @@
+/*Reverse LinkedList / Reverse Linked List / Reverse List RECURSIVELY*/
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode reverseList(ListNode head) {
+       if(head == null ||head.next == null){
+            return head;
+        }
+
+        ListNode root = reverseList(head.next);
+
+        head.next.next = head;
+        head.next = null;
+        return root;
+    }
+}
+/*Reverse LinkedList / Reverse Linked List / Reverse List ITERATIVELY*/
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode reverseList(ListNode head) {
+         ListNode prev = null;
+    while (head != null) {
+        ListNode temp = head.next;
+        head.next = prev;
+        prev = head;
+        head = temp;
+    }
+    return prev;
+    }
+}
+/*Median of 2 sorted arrays*/
+public class Solution {
+    public double findMedianSortedArrays(int[] A, int[] B) {
+        int n = A.length;
+    int m = B.length;
+    // the following call is to make sure len(A) <= len(B).
+    // yes, it calls itself, but at most once, shouldn't be
+    // consider a recursive solution
+    if (n > m)
+        return findMedianSortedArrays(B, A);
+
+    // now, do binary search
+    int k = (n + m - 1) / 2;
+    int l = 0, r = Math.min(k, n); // r is n, NOT n-1, this is important!!
+    while (l < r) {
+        int midA = (l + r) / 2;
+        int midB = k - midA;
+        if (A[midA] < B[midB])
+            l = midA + 1;
+        else
+            r = midA;
+    }
+
+    // after binary search, we almost get the median because it must be between
+    // these 4 numbers: A[l-1], A[l], B[k-l], and B[k-l+1] 
+
+    // if (n+m) is odd, the median is the larger one between A[l-1] and B[k-l].
+    // and there are some corner cases we need to take care of.
+    int a = Math.max(l > 0 ? A[l - 1] : Integer.MIN_VALUE, k - l >= 0 ? B[k - l] : Integer.MIN_VALUE);
+    if (((n + m) & 1) == 1)
+        return (double) a;
+
+    // if (n+m) is even, the median can be calculated by 
+    //      median = (max(A[l-1], B[k-l]) + min(A[l], B[k-l+1]) / 2.0
+    // also, there are some corner cases to take care of.
+    int b = Math.min(l < n ? A[l] : Integer.MAX_VALUE, k - l + 1 < m ? B[k - l + 1] : Integer.MAX_VALUE);
+    return (a + b) / 2.0;
+    }
+}
+/*Median of array*/
+Arrays.sort(numArray);
+double median;
+if (numArray.length % 2 == 0)
+    median = ((double)numArray[numArray.length/2] + (double)numArray[numArray.length/2 - 1])/2;
+else
+    median = (double) numArray[numArray.length/2];
+
+/*candy / candies distribution to the candidates
+This solution picks each element from the input array only once. First, we give a candy to the first child. Then for each child we have three cases:
+1.	His/her rating is equal to the previous one -> give 1 candy.
+2.	His/her rating is greater than the previous one -> give him (previous + 1) candies.
+3.	His/her rating is less than the previous one -> don't know what to do yet, let's just count the number of such consequent cases.
+When we enter 1 or 2 condition we can check our count from 3. If it's not zero then we know that we were descending before and we have everything to update our total candies amount: number of children in descending sequence of raitings - coundDown, number of candies given at peak - prev (we don't update prev when descending). Total number of candies for "descending" children can be found through arithmetic progression formula (1+2+...+countDown). Plus we need to update our peak child if his number of candies is less then or equal to countDown.
+*/
+public class Solution {
+    public int candy(int[] ratings) {
+         if (ratings == null || ratings.length == 0) return 0;
+        int total = 1, prev = 1, countDown = 0;
+        for (int i = 1; i < ratings.length; i++) {
+            if (ratings[i] >= ratings[i-1]) {
+                if (countDown > 0) {
+                    total += countDown*(countDown+1)/2; // arithmetic progression
+                    if (countDown >= prev) total += countDown - prev + 1;
+                    countDown = 0;
+                    prev = 1;
+                }
+                prev = ratings[i] == ratings[i-1] ? 1 : prev+1;
+                total += prev;
+            } else countDown++;
+        }
+        if (countDown > 0) { // if we were descending at the end
+            total += countDown*(countDown+1)/2;
+            if (countDown >= prev) total += countDown - prev + 1;
+        }
+        return total;
+    }
+}
+/*JUMP Game / jump the maximum in array to reach the end*/
+public class Solution {
+    public int jump(int[] A) {
+         int count = 0, max = 0;
+    for (int i = 0, nextMax = 0; i <= max && i < A.length - 1; i++) {
+        nextMax = Math.max(nextMax, i + A[i]);
+        if (i == max) {
+            max = nextMax;
+            count++;
+        }
+    }
+    // if there is no way to get to the end, return -1
+    return max >= A.length - 1 ? count : -1;
+    }
+}
+/*Number of substrings of a String*/
+public int subStrings(String c)
+{
+		int len=c.length;
+		int maxlength=0;
+		int start=0;
+		int count=0;
+		boolean [][]temp=new boolean[len][len];
+		
+		for(int i=0;i<len;i++){
+			temp[i][i]=true;
+		}
+		
+		for(int i=0;i<len-1;i++){
+			if(c[i]==c[i+1]){
+				temp[i][i+1]=true;
+				start=i;
+				maxlength=2;
+			}
+		}
+		
+		for(int  j=2;j<len;j++){
+			for(int i=0,k=j;k<len;i++,k++){
+				if(c[i]==c[k] && temp[i+1][k-1]==true){
+					temp[i][k]=true;					
+					if(k-i+1>maxlength){
+					start=i;
+					maxlength=k-i+1;
+					}					
+				}
+			}
+		}
+		
+		/*for(int i=start;i<=start+maxlength-1;i++){
+			System.out.print(c[i]);
+		}*/
+		
+		for(int i=0;i<temp.length;i++){
+			for(int j=i;j<temp.length;j++){
+				
+				if(temp[i][j]==true)
+					count++;
+			}
+		}
+		
+		System.out.println(count);
+		
+		return maxlength;
+}
+/*check if string is palindrome with other characters in middle*/
+class Solution {
+  public static void main(String[] args) {
+    String s ="0000000";
+    
+    boolean flag=false ;
+   int start =0;
+   int end = s.length()-1;
+  while(start<end)
+  {
+    if(Character.isLetter(s.charAt(start))&&Character.isLetter(s.charAt(end)))
+    {
+        //System.out.println("First condition"); 
+        if(Character.toLowerCase(s.charAt(start))!=Character.toLowerCase(s.charAt(end)))
+        {  
+         flag=true;
+          break;
+        }
+      start++;
+      end--;
+    }else if(!Character.isLetter(s.charAt(start))){
+       // System.out.println("second condition");
+        start++; 
+    }
+    else if(!Character.isLetter(s.charAt(end))){
+       // System.out.println("third condition");
+      end--;
+    }
+    }
+  if(flag)
+    System.out.println("False");
+  else
+    System.out.println("True");
+  }
+}
+/*Ternary tree*/
+/*
+// The following definitions of Tree and Node are provided.
+// insert and delete will be methods of class Tree.
+
+public class Tree {
+    private class Node {
+        private int val;
+        private Node left = null;
+        private Node right = null;
+        private Node mid = null;
+
+        public Node(int val) {
+            this.val = val;
+        }
+    }
+
+    private Node root;
+*/
+
+    /* 
+     * Please complete this method.
+     * Inserts val into the tree. There is no need to rebalance the tree.
+     */
+    public void insert(int val) {
+            Node newNode = new Node(val);
+            //wNode.val = val;
+            if(root==null)
+            {
+                root = newNode;
+                return;
+            }
+            else
+            {
+                Node tempNode = root;
+                while(tempNode!=null){  
+                   if(tempNode.val > val)
+                       if(tempNode.left == null)
+                       {
+                            tempNode.left = newNode;
+                            break;
+                       }
+                       else
+                            tempNode = tempNode.left;
+                   else if(tempNode.val < val)
+                       if(tempNode.right == null)
+                       {
+                           tempNode.right = newNode;
+                            break;
+                       }
+                       else
+                            tempNode = tempNode.right;
+                   else
+                   {
+                       if(tempNode.mid == null)
+                       {
+                           tempNode.mid = newNode;
+                            break;
+                       }
+                       else
+                            tempNode = tempNode.mid;   
+                   }
+                }
+            }
+
+    }
+
+    /* 
+     * Please complete this method.
+     * Deletes only one instance of val from the tree.
+     * If val does not exist in the tree, do nothing.
+     * There is no need to rebalance the tree.
+     */
+    public void delete(int val) {
+        Node currentNode = root;
+        Node parent=null;     // parent of the node being deleted
+        boolean LorR=false;  // flag to indicate if there is Left or Right child
+        boolean firstLoop=true;
+        if(root==null)
+            return;
+        while(currentNode!=null)
+        {
+            if(currentNode.left == null && currentNode.right==null && currentNode.mid==null)
+            {
+                if(currentNode.val==val)
+                {
+                    currentNode = null;
+                    return;
+                }
+                else
+                    return;
+            }
+            else if(val<currentNode.val)
+            {
+                parent=currentNode;
+                LorR=false;
+                currentNode=currentNode.left;
+            }
+            else if(val>currentNode.val)
+            {
+                parent=currentNode;
+                LorR=true;
+                currentNode=currentNode.right;
+            }	
+            else if(currentNode.val==val)
+            {
+                if(currentNode.mid!=null)
+                  {
+                        while(currentNode.mid!=null)
+                        {
+                            parent=currentNode;
+                            currentNode=currentNode.mid;
+                        }
+                        parent.mid=null;
+                  }
+                 else if(currentNode.left==null && currentNode.right!=null)
+                 {
+                     if(firstLoop==true)
+                        root=currentNode.right;
+                     else if(LorR==false)
+                        parent.left=currentNode.right;
+                     else
+                         parent.right=currentNode.right;                     
+                 }
+                 else if(currentNode.right==null && currentNode.left!=null)
+                 {
+                     if(firstLoop==true)
+                        root=currentNode.left;
+                     else if(LorR==false)
+                        parent.left=currentNode.left;
+                     else
+                         parent.right=currentNode.left;                     
+                 }
+                 else if(currentNode.left==null && currentNode.right==null)
+                 {
+                     if(firstLoop==true)
+                        root=null;
+                     else if(LorR==false)
+                        parent.left=null;
+                     else
+                        parent.right=null;                     
+                 }
+                else 
+                  {
+                        Node node = currentNode.left;
+                        if(node.right==null)
+                        {
+                            node.right=currentNode.right;
+                            currentNode=node;
+                        }
+                        else
+                        {
+                            Node parentNode=currentNode;  //parent of the rightmost node
+                            
+                            while(node.right!=null)
+                            {   
+                                parentNode=node;
+                                node=node.right;
+                            }
+                            parentNode.right=node.left;
+                            node.left=currentNode.left;
+                            node.right=currentNode.left;
+                            if(firstLoop==true)
+                                root=node;
+                            else if(LorR==false)
+                            parent.left=node;
+                            else
+                               parent.right=node;
+                      }   
+                  }
+            }
+            else
+                return;
+        firstLoop=false;
+        }
+    }
+/*Given a particular node, return the successor of that node in an inorder traversal / inorder successor given its given parent of node
+Node {
+    Node left;
+    Node right;
+    Node parent;
+    Object data;
+}
+*/
+Node inOrderSuccessor (Node node)
+       {
+           if(node.right!=null)
+              {
+                  Node nodeR = node.right; 
+                  while(nodeR.left!=null)
+                      nodeR=nodeR.left;
+                  return nodeR;
+              }
+            parent = node.parent;
+           
+    while (parent != null) {
+        if (parent.left == node) {
+            break;
+        } else {
+            node = parent;
+            parent = parent.parent;
+        }
+    }
+    return parent
+           
+           
+       }
+
+
 /*Edit Distance / minimum distance required to convert one word to other 
 Basically the idea is to build up the solution step by step and keep track of the previous optimal solution in a 2D array. In this 2D array dp, dp[i][j] means the operation needed to transform word1(0, i) to word2(0,j).
 There can be three conditions:
