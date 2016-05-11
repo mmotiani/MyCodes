@@ -1,3 +1,1689 @@
+/*Write a function that takes a string as input and returns the string reversed | Reverse StRing*/
+
+public class Solution {
+
+    public String reverseString(String s) {
+
+        char[] word = s.toCharArray();
+
+        int i = 0;
+
+        int j = s.length() - 1;
+
+        while (i < j) {
+
+            char temp = word[i];
+
+            word[i] = word[j];
+
+            word[j] = temp;
+
+            i++;
+
+            j--;
+
+        }
+
+        return new String(word);
+
+    }
+
+}
+
+/*POWER OF THREE (SOLUTION 1)*/
+public class Solution {
+
+    public boolean isPowerOfThree(int n) {
+
+        // 1162261467 is 3^19,  3^20 is bigger than int  
+
+    return ( n>0 &&  1162261467%n==0);
+
+    }
+
+}
+/* POWER OF THREE (SOLUTION 2)*/
+public class Solution {
+
+    public boolean isPowerOfThree(int n) {
+
+       // The expression "(int) Math.pow(3, (int) (Math.log(Integer.MAX_VALUE) / Math.log(3.0))" returns max integer that is "power of 3"
+
+    return n > 0 && (int) Math.pow(3, (int) (Math.log(Integer.MAX_VALUE) / Math.log(3.0))) % n == 0;
+    }
+
+}
+/* Reverse Vowels of a String (LESS OPTIMIZED)*/
+public class Solution {
+
+    public String reverseVowels(String s) {
+
+       if(s == null || s.length()==0) return s;
+
+    String vowels = "aeiouAEIOU";
+
+    char[] chars = s.toCharArray();
+
+    int start = 0;
+
+    int end = s.length()-1;
+
+    while(start<end){
+
+
+
+        while(start<end && !vowels.contains(chars[start]+"")){
+
+            start++;
+
+        }
+
+
+
+        while(start<end && !vowels.contains(chars[end]+"")){
+
+            end--;
+
+        }
+
+
+
+        char temp = chars[start];
+
+        chars[start] = chars[end];
+
+        chars[end] = temp;
+
+
+
+        start++;
+
+        end--;
+
+    }
+
+    return new String(chars);
+
+    }
+
+}
+/* Reverse Vowels of a String  (MORE OPTIMIZED)*/
+public class Solution {
+
+    public String reverseVowels(String s) {
+
+        if(s == null || s.length()==0){
+
+            return s;
+
+        }
+
+        HashSet<Character> vowels = new HashSet<>();
+
+        vowels.add('a');
+
+        vowels.add('e');
+
+        vowels.add('i');
+
+        vowels.add('o');
+
+        vowels.add('u');
+
+
+
+        vowels.add('A');
+
+        vowels.add('E');
+
+        vowels.add('I');
+
+        vowels.add('O');
+
+        vowels.add('U');
+
+
+
+        // reverse the  vowels while popping up
+
+        Stack<Character> vStack = new Stack<>();
+
+        for(char c : s.toCharArray()){
+
+            if(vowels.contains(c)){
+
+                vStack.push(c);
+
+            }
+
+        }
+
+
+
+        StringBuilder sb = new StringBuilder();
+
+        for(char c : s.toCharArray()){
+
+            if(vowels.contains(c)){
+
+                sb.append(vStack.pop());
+
+            }else{
+
+                sb.append(c);
+
+            }
+
+        }
+
+        return sb.toString();
+
+    }
+
+}
+/*POWER OF FOUR*/
+// The idea is that numbers in quaternary system that is power of 4 will be like 10, 100, 1000 and such. Similar to binary case. And this can be extended to any radix.
+
+public class Solution {
+
+    public boolean isPowerOfFour(int num) {
+
+        return Integer.toString(num, 4).matches("10*");
+
+    }
+
+}
+
+/*REVERSE BITS*/
+public class Solution {
+
+    // you need treat n as an unsigned value
+
+    public int reverseBits(int n) {
+
+        int res=0;
+
+    for(int i=0;i<32;i++){
+
+        res= ( res << 1 ) | ( n & 1 );         
+
+        n = n >> 1;                  
+
+    }
+
+    return res;
+
+    }
+
+}
+/* Counting Bits | Count 1s bits and return them in array (Dynamic Programming)*/
+public class Solution {
+
+    public int[] countBits(int num) {
+
+        int[] bits = new int[num + 1];    
+
+    for(int i = 1; i <= num; i++){
+
+        bits[i] = bits[i/2];
+
+        if(i%2 == 1) bits[i]++; 
+
+    }
+
+    return bits;
+
+    }
+
+}
+/* Counting Bits | Count 1s bits and return them in array (using two pointers)*/
+/*This uses the hint from the description about using ranges. Basically, the numbers in one range are equal to 1 plus all of the numbers in the ranges before it. If you write out the binary numbers, you can see that numbers 8-15 have the same pattern as 0-7 but with a 1 at the front.
+My logic was to copy the previous values (starting at 0) until a power of 2 was hit (new range), at which point we just reset the t pointer back to 0 to begin the new range.
+*/
+public class Solution {
+
+    public int[] countBits(int num) {
+
+       int[] ret = new int[num+1];
+
+    ret[0] = 0;
+
+    int pow = 1;
+
+    for(int i = 1, t = 0; i <= num; i++, t++) {
+
+        if(i == pow) {
+
+            pow *= 2;
+
+            t = 0;
+
+        }
+
+        ret[i] = ret[t] + 1;
+
+    }
+
+    return ret;
+
+    }
+
+}
+/*Patching Array | Patches in array (SOLUTION 1)*/
+
+/*
+Explanation
+Let miss be the smallest sum in [0,n] that we might be missing. Meaning we already know we can build all sums in [0,miss). Then if we have a number num <= miss in the given array, we can add it to those smaller sums to build all sums in [0,miss+num). If we don't, then we must add such a number to the array, and it's best to add miss itself, to maximize the reach.
+________________________________________
+Example: Let's say the input is nums = [1, 2, 4, 13, 43] and n = 100. We need to ensure that all sums in the range [1,100] are possible.
+Using the given numbers 1, 2 and 4, we can already build all sums from 0 to 7, i.e., the range [0,8). But we can't build the sum 8, and the next given number (13) is too large. So we insert 8 into the array. Then we can build all sums in [0,16).
+Do we need to insert 16 into the array? No! We can already build the sum 3, and adding the given 13 gives us sum 16. We can also add the 13 to the other sums, extending our range to [0,29).
+And so on. The given 43 is too large to help with sum 29, so we must insert 29 into our array. This extends our range to [0,58). But then the 43 becomes useful and expands our range to [0,101). At which point we're done.
+
+*/
+public class Solution {
+
+    public int minPatches(int[] nums, int n) {
+
+        int count = 0, i = 0;
+
+    for (long miss=1; miss <= n; count++){
+
+        if(i < nums.length && nums[i] <= miss)
+
+            miss = miss + nums[i++];
+
+        else
+
+            miss+=miss;
+
+        }
+
+    return count - i;
+
+    }
+
+}
+
+/*Patching Array | Patches in array (SOLUTION 2)*/
+/*
+The variable max records the maximal value that can be formed by the elements in nums and patched numbers. If max is less than nums[i] - 1 which means we need to patch a new number, we then patch max + 1.
+
+*/
+
+public class Solution {
+
+    public int minPatches(int[] nums, int n) {
+
+       long max = 0;
+
+    int cnt = 0;
+
+    for (int i = 0; max < n;) {
+
+        if (i >= nums.length || max < nums[i] - 1) {
+
+            max += max + 1;
+
+            cnt++;
+
+        } else {
+
+            max += nums[i];
+
+            i++;
+
+        }
+
+    }
+
+    return cnt;
+
+    }
+
+}
+/*Flatten nested list iterator (DFS Solution)*/
+
+/**
+
+ * // This is the interface that allows for creating nested lists.
+
+ * // You should not implement it, or speculate about its implementation
+
+ * public interface NestedInteger {
+
+ *
+
+ *     // @return true if this NestedInteger holds a single integer, rather than a nested list.
+
+ *     public boolean isInteger();
+
+ *
+
+ *     // @return the single integer that this NestedInteger holds, if it holds a single integer
+
+ *     // Return null if this NestedInteger holds a nested list
+
+ *     public Integer getInteger();
+
+ *
+
+ *     // @return the nested list that this NestedInteger holds, if it holds a nested list
+
+ *     // Return null if this NestedInteger holds a single integer
+
+ *     public List<NestedInteger> getList();
+
+ * }
+
+ */
+
+public class NestedIterator implements Iterator<Integer> {
+
+Stack<Iterator<NestedInteger>> stack = new Stack<>();
+
+    Integer current = null;
+
+    public NestedIterator(List<NestedInteger> nestedList) {
+
+       if (nestedList != null) {
+
+            stack.push(nestedList.iterator());
+
+        }
+
+    }
+
+
+
+    @Override
+
+    public Integer next() {
+
+        return current;
+
+    }
+
+
+
+    @Override
+
+    public boolean hasNext() {
+
+          while (!stack.isEmpty()) {
+
+            Iterator<NestedInteger> node = stack.peek();
+
+
+
+            // This will clear out empty iterators.
+
+            if (!node.hasNext()) {
+
+                stack.pop();
+
+                continue;
+
+            }
+
+
+
+            // If the value is an integer, done - load up and return.
+
+            // Otherwise push the current list to the top of the stack and continue.
+
+            NestedInteger value = node.next();
+
+            if (value.isInteger()) {
+
+                current = value.getInteger();
+
+                return true;
+
+            } else {
+
+                stack.push(value.getList().iterator());
+
+            }
+
+        }
+
+
+
+        return false;
+
+    }
+
+    
+
+}
+
+
+
+/**
+
+ * Your NestedIterator object will be instantiated and called as such:
+
+ * NestedIterator i = new NestedIterator(nestedList);
+
+ * while (i.hasNext()) v[f()] = i.next();
+
+ */
+/*Search in a rotated sorted array 2 (duplicates are not allowed)*/
+public class Solution {
+
+    public int search(int[] nums, int target) {
+
+        int start = 0;
+
+        int end = nums.length - 1;
+
+        while (start <= end){
+
+            int mid = (start + end) / 2;
+
+            if (nums[mid] == target)
+
+                return mid;
+
+
+
+            if (nums[start] <= nums[mid]){
+
+                 if (target < nums[mid] && target >= nums[start]) 
+
+                    end = mid - 1;
+
+                 else
+
+                    start = mid + 1;
+
+            } 
+
+
+
+            if (nums[mid] <= nums[end]){
+
+                if (target > nums[mid] && target <= nums[end])
+
+                    start = mid + 1;
+
+                 else
+
+                    end = mid - 1;
+
+            }
+
+        }
+
+        return -1;
+
+    }
+
+}
+/*Top K frequent elements */
+//done using bucket sort
+public class Solution {
+
+    public List<Integer> topKFrequent(int[] nums, int k) {
+
+        
+
+    List<Integer>[] bucket = new List[nums.length + 1];
+
+    Map<Integer, Integer> frequencyMap = new HashMap<Integer, Integer>();
+
+
+
+    for (int n : nums) {
+
+        frequencyMap.put(n, frequencyMap.getOrDefault(n, 0) + 1);
+
+    }
+
+
+
+    for (int key : frequencyMap.keySet()) {
+
+        int frequency = frequencyMap.get(key);
+
+        if (bucket[frequency] == null) {
+
+            bucket[frequency] = new ArrayList<>();
+
+        }
+
+        bucket[frequency].add(key);
+
+    }
+
+
+
+    List<Integer> res = new ArrayList<>();
+
+
+
+    for (int pos = bucket.length - 1; pos >= 0 && res.size() < k; pos--) {
+
+        if (bucket[pos] != null) {
+
+            res.addAll(bucket[pos]);
+
+        }
+
+    }
+
+    return res;
+
+    }
+
+}
+/*Integer break to maximize the sum (Read the explaination as well) (DP O(n))*/
+//For example, given n = 2, return 1 (2 = 1 + 1); given n = 10, return 36 (10 = 3 + 3 + 4)
+/*
+Why the max product of any n>4 must contain a factor of 3? 
+1. It can't contain any factor x that is >= 5, o.w., we can further increase the max product by decomposing x, as the decomposed x when x>=5 is strictly greater than x;
+2. Out of 1, 2, 3, 4, we know 1 won't be a factor of n when n>4, if n is an odd number, 3 must be there as a factor (2 and 4 can't add up to an odd number); 
+3. Now say n is an even number (n>4) and only has factor of 2 and 4, we can always split a 6 to3X3, which is better than 2X2X2.
+Therefore, the max product of any n (n>4) must contain a factor of 3. The recurrence relation holds.
+Further, as it holds for all n (n>4), we will be only using 3 as factor for n (n>4), we keep subtracting 3 until n<=4, and adopt the remaining factor.
+
+*/
+public class Solution {
+
+    public int integerBreak(int n) {
+
+        if (n <= 2) return 1;
+
+    if (n == 3) return 2;
+
+    if (n == 4) return 4;
+
+    int[] p = new int[n+1];
+
+    p[2] = 2;
+
+    p[3] = 3;
+
+    p[4] = 4;
+
+    for (int i = 5; i <= n; ++i) {
+
+        p[i] = 3 * p[i-3];
+
+    }
+
+    return p[n];
+
+    }
+
+}
+/* Integer break to maximize the sum (Read the explaination as well) (using pow function O(n))*/
+/*
+Given a number n lets say we have a possible product P = p1 * p2 * ... pk. Then we notice what would happen if we could break pi up into two more terms lets say one of the terms is 2 we would get the terms pi-2 and 2 so if 2(pi-2) > pi we would get a bigger product and this happens if pi > 4. since there is one other possible number less then 4 that is not 2 aka 3. Likewise for 3 if we instead breakup the one of the terms into pi-3 and 3 we would get a bigger product if 3*(pi-3) > pi which happens if pi > 4.5.
+Hence we see that all of the terms in the product must be 2's and 3's. So we now just need to write n = a3 + b2 such that P = (3^a) * (2^b) is maximized. Hence we should favor more 3's then 2's in the product then 2's if possible.
+So if n = a*3 then the answer will just be 3^a.
+if n = a3 + 2 then the answer will be 2(3^a).
+and if n = a3 + 22 then the answer will be 2 * 2 * 3^a
+The above three cover all cases that n can be written as and the Math.pow() function takes O(log n) time to preform hence that is the running time.
+
+
+*/
+public class Solution {
+
+    public int integerBreak(int n) {
+
+         if(n == 2)
+
+            return 1;
+
+        else if(n == 3)
+
+            return 2;
+
+        else if(n%3 == 0)
+
+            return (int)Math.pow(3, n/3);
+
+        else if(n%3 == 1)
+
+            return 2 * 2 * (int) Math.pow(3, (n - 4) / 3);
+
+        else 
+
+            return 2 * (int) Math.pow(3, n/3);
+
+    }
+
+}
+/* Wildcard Matching
+*/
+/*
+The basic idea is to have one pointer for the string and one pointer for the pattern. This algorithm iterates at most length(string) + length(pattern) times, for each iteration, at least one pointer advance one step
+
+*/
+public class Solution {
+
+    public boolean isMatch(String str, String pattern) {
+
+        int s = 0, p = 0, match = 0, starIdx = -1;            
+
+        while (s < str.length()){
+
+            // advancing both pointers
+
+            if (p < pattern.length()  && (pattern.charAt(p) == '?' || str.charAt(s) == pattern.charAt(p))){
+
+                s++;
+
+                p++;
+
+            }
+
+            // * found, only advancing pattern pointer
+
+            else if (p < pattern.length() && pattern.charAt(p) == '*'){
+
+                starIdx = p;
+
+                match = s;
+
+                p++;
+
+            }
+
+           // last pattern pointer was *, advancing string pointer
+
+            else if (starIdx != -1){
+
+                p = starIdx + 1;
+
+                match++;
+
+                s = match;
+
+            }
+
+           //current pattern pointer is not star, last patter pointer was not *
+
+          //characters do not match
+
+            else return false;
+
+        }
+
+
+
+        //check for remaining characters in pattern
+
+        while (p < pattern.length() && pattern.charAt(p) == '*')
+
+            p++;
+
+
+
+        return p == pattern.length();
+
+    }
+
+}
+/*Self Crossing/ Line crossing*/
+
+
+// Categorize the self-crossing scenarios, there are 3 of them: 
+
+// 1. Fourth line crosses first line and works for fifth line crosses second line and so on...
+
+// 2. Fifth line meets first line and works for the lines after
+
+// 3. Sixth line crosses first line and works for the lines after
+
+public class Solution {
+
+    public boolean isSelfCrossing(int[] x) {
+
+        int l = x.length;
+
+        if(l <= 3) return false;
+
+
+
+        for(int i = 3; i < l; i++){
+
+            if(x[i] >= x[i-2] && x[i-1] <= x[i-3]) return true;  //Fourth line crosses first line and onward
+
+            if(i >=4)
+
+            {
+
+                if(x[i-1] == x[i-3] && x[i] + x[i-4] >= x[i-2]) return true; // Fifth line meets first line and onward
+
+            }
+
+            if(i >=5)
+
+            {
+
+                if(x[i-2] - x[i-4] >= 0 && x[i] >= x[i-2] - x[i-4] && x[i-1] >= x[i-3] - x[i-5] && x[i-1] <= x[i-3]) return true;  // Sixth line crosses first line and onward
+
+            }
+
+        }
+
+        return false;
+
+    }
+
+}
+/*Palindrome Pairs
+Given words = ["bat", "tab", "cat"]
+Return [[0, 1], [1, 0]]
+*/
+/*
+There are several cases to be considered that isPalindrome(s1 + s2):
+Case1: If s1 is a blank string, then for any string that is palindrome s2, s1+s2 and s2+s1 are palindrome.
+Case 2: If s2 is the reversing string of s1, then s1+s2 and s2+s1 are palindrome.
+Case 3: If s1[0:cut] is palindrome and there exists s2 is the reversing string of s1[cut+1:] , then s2+s1 is palindrome.
+Case 4: Similiar to case3. If s1[cut+1: ] is palindrome and there exists s2 is the reversing string of s1[0:cut] , then s1+s2 is palindrome.
+To make the search faster, build a HashMap to store the String-idx pairs.
+*/public class Solution {
+
+    public List<List<Integer>> palindromePairs(String[] words) {
+
+         List<List<Integer>> res = new ArrayList<List<Integer>>();
+
+    if(words == null || words.length == 0){
+
+        return res;
+
+    }
+
+    //build the map save the key-val pairs: String - idx
+
+    HashMap<String, Integer> map = new HashMap<>();
+
+    for(int i = 0; i < words.length; i++){
+
+        map.put(words[i], i);
+
+    }
+
+
+
+    //special cases: "" can be combine with any palindrome string
+
+    if(map.containsKey("")){
+
+        int blankIdx = map.get("");
+
+        for(int i = 0; i < words.length; i++){
+
+            if(isPalindrome(words[i])){
+
+                if(i == blankIdx) continue;
+
+                res.add(Arrays.asList(blankIdx, i));
+
+                res.add(Arrays.asList(i, blankIdx));
+
+            }
+
+        }
+
+    }
+
+
+
+    //find all string and reverse string pairs
+
+    for(int i = 0; i < words.length; i++){
+
+        String cur_r = reverseStr(words[i]);
+
+        if(map.containsKey(cur_r)){
+
+            int found = map.get(cur_r);
+
+            if(found == i) continue;
+
+            res.add(Arrays.asList(i, found));
+
+        }
+
+    }
+
+
+
+    //find the pair s1, s2 that 
+
+    //case1 : s1[0:cut] is palindrome and s1[cut+1:] = reverse(s2) => (s2, s1)
+
+    //case2 : s1[cut+1:] is palindrome and s1[0:cut] = reverse(s2) => (s1, s2)
+
+    for(int i = 0; i < words.length; i++){
+
+        String cur = words[i];
+
+        for(int cut = 1; cut < cur.length(); cut++){
+
+            if(isPalindrome(cur.substring(0, cut))){
+
+                String cut_r = reverseStr(cur.substring(cut));
+
+                if(map.containsKey(cut_r)){
+
+                    int found = map.get(cut_r);
+
+                    if(found == i) continue;
+
+                    res.add(Arrays.asList(found, i));
+
+                }
+
+            }
+
+            if(isPalindrome(cur.substring(cut))){
+
+                String cut_r = reverseStr(cur.substring(0, cut));
+
+                if(map.containsKey(cut_r)){
+
+                    int found = map.get(cut_r);
+
+                    if(found == i) continue;
+
+                    res.add(Arrays.asList(i, found));
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+    return res;
+
+    }
+
+    public String reverseStr(String str){
+
+    StringBuilder sb= new StringBuilder(str);
+
+    return sb.reverse().toString();
+
+}
+
+
+
+public boolean isPalindrome(String s){
+
+    int i = 0;
+
+    int j = s.length() - 1;
+
+    while(i <= j){
+
+        if(s.charAt(i) != s.charAt(j)){
+
+            return false;
+
+        }
+
+        i++;
+
+        j--;
+
+    }
+
+    return true;
+
+}
+
+}
+/*Word Search 2 (using TRIE)*/
+public class Solution {
+
+    public class TrieNode{
+
+        public boolean isWord = false;
+
+        public TrieNode[] child = new TrieNode[26];
+
+        public TrieNode(){
+
+
+
+        }
+
+    }
+
+
+
+    TrieNode root = new TrieNode();
+
+    boolean[][] flag;
+
+    public List<String> findWords(char[][] board, String[] words) {
+
+        Set<String> result = new HashSet<>();
+
+        flag = new boolean[board.length][board[0].length];
+
+
+
+        addToTrie(words);
+
+
+
+        for(int i = 0; i < board.length; i++){
+
+            for(int j = 0; j < board[0].length; j++){
+
+                if(root.child[board[i][j] - 'a'] != null){
+
+                    search(board, i, j, root, "", result);
+
+                }
+
+            }
+
+        }
+
+
+
+        return new LinkedList<>(result);
+
+    }
+
+    private void addToTrie(String[] words){
+
+        for(String word: words){
+
+            TrieNode node = root;
+
+            for(int i = 0; i < word.length(); i++){
+
+                char ch = word.charAt(i);
+
+                if(node.child[ch - 'a'] == null){
+
+                    node.child[ch - 'a'] = new TrieNode();
+
+                }
+
+                node = node.child[ch - 'a'];
+
+            }
+
+            node.isWord = true;
+
+        }
+
+    }
+
+   private void search(char[][] board, int i, int j, TrieNode node, String word, Set<String> result){
+
+        if(i >= board.length || i < 0 || j >= board[i].length || j < 0 || flag[i][j]){
+
+            return;
+
+        }
+
+
+
+        if(node.child[board[i][j] - 'a'] == null){
+
+            return;
+
+        }
+
+
+
+        flag[i][j] = true;
+
+        node = node.child[board[i][j] - 'a'];
+
+        if(node.isWord){
+
+            result.add(word + board[i][j]);
+
+        }
+
+
+
+        search(board, i-1, j, node, word + board[i][j], result);
+
+        search(board, i+1, j, node, word + board[i][j], result);
+
+        search(board, i, j-1, node, word + board[i][j], result);
+
+        search(board, i, j+1, node, word + board[i][j], result);
+
+
+
+        flag[i][j] = false;
+
+    }
+
+}
+/*Maximal Rectangles*/
+/*
+
+The DP solution proceeds row by row, starting from the first row. Let the maximal rectangle area at row i and column j be computed by [right(i,j) - left(i,j)]*height(i,j).
+
+
+
+All the 3 variables left, right, and height can be determined by the information from previous row, and also information from the current row. So it can be regarded as a DP solution. The transition equations are:
+
+
+
+left(i,j) = max(left(i-1,j), curleft), curleft can be determined from the current row
+
+right(i,j) = min(right(i-1,j), curright), curright can be determined from the current row
+
+height(i,j) = height(i-1,j) + 1, if matrix[i][j]=='1';
+
+height(i,j) = 0, if matrix[i][j]=='0'
+
+*/
+
+public class Solution {
+
+    public int maximalRectangle(char[][] matrix) {
+
+       if (matrix == null || matrix.length == 0 || matrix[0].length == 0) { 
+
+           return 0; 
+
+       }
+
+    int rows = matrix.length, cols = matrix[0].length;
+
+    int[] left = new int[cols], right = new int[cols], top = new int[cols];
+
+    Arrays.fill(left, cols); // max distance (inclusive) to left-most 1 at (y,x)
+
+    Arrays.fill(right, cols); // max distance (inclusive) to right-most 1 at (y,x)
+
+    Arrays.fill(top, 0); // max distance (inclusive) to top-most 1 at (y,x)
+
+    int max = 0;
+
+    for (int y = 0; y < rows; y++) {
+
+        for (int x = 0; x < cols; x++) {
+
+            if (matrix[y][x] == '1') { 
+
+                top[x] += 1;
+
+            }
+
+            else { 
+
+                top[x] = 0; 
+
+                
+
+            }
+
+        }
+
+        int l = 0; // max left distance so far
+
+        for (int x = 0; x < cols; x++) {
+
+            if (matrix[y][x] == '1') { 
+
+                left[x] = Math.min(left[x], ++l); 
+
+                
+
+            }
+
+            else { 
+
+                left[x] = cols; l = 0; 
+
+                
+
+            }
+
+        }
+
+        int r = 0; // max right distance so far
+
+        for (int x = cols-1; x >= 0; x--) {
+
+            if (matrix[y][x] == '1') { 
+
+                right[x] = Math.min(right[x], ++r); 
+
+                
+
+            }
+
+            else { 
+
+                right[x] = cols; r = 0; 
+
+                
+
+            }
+
+        }
+
+        for (int x = 0; x < cols; x++) {
+
+            if (matrix[y][x] == '1') {
+
+                // width should exclude double count of current element
+
+                max = Math.max(max, (left[x]+right[x]-1)*top[x]);
+
+            }
+
+        }
+
+    }
+
+    return max;
+
+    }
+
+}
+/*Reverse Linked List 2 (reverse a linked list from one position to another)*/
+/**
+
+ * Definition for singly-linked list.
+
+ * public class ListNode {
+
+ *     int val;
+
+ *     ListNode next;
+
+ *     ListNode(int x) { val = x; }
+
+ * 
+
+ */
+
+ 
+
+ /*Simply just reverse the list along the way using 4 pointers: dummy, pre, start, then*/
+
+public class Solution {
+
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+
+        if(head == null) return null;
+
+    ListNode dummy = new ListNode(0); // create a dummy node to mark the head of this list
+
+    dummy.next = head;
+
+    ListNode pre = dummy; // make a pointer pre as a marker for the node before reversing
+
+    for(int i = 0; i<m-1; i++) pre = pre.next;
+
+
+
+    ListNode start = pre.next; // a pointer to the beginning of a sub-list that will be reversed
+
+    ListNode then = start.next; // a pointer to a node that will be reversed
+
+
+
+    // 1 - 2 -3 - 4 - 5 ; m=2; n =4 ---> pre = 1, start = 2, then = 3
+
+    // dummy-> 1 -> 2 -> 3 -> 4 -> 5
+
+
+
+    for(int i=0; i<n-m; i++)
+
+    {
+
+        start.next = then.next;
+
+        then.next = pre.next;
+
+        pre.next = then;
+
+        then = start.next;
+
+    }
+
+
+
+    // first reversing : dummy->1 - 3 - 2 - 4 - 5; pre = 1, start = 2, then = 4
+
+    // second reversing: dummy->1 - 4 - 3 - 2 - 5; pre = 1, start = 2, then = 5 (finish)
+
+
+
+    return dummy.next;
+
+
+
+    }
+
+}
+/*Path Sum 2 | return all paths in a tree that equals the given sum*/
+/**
+
+ * Definition for a binary tree node.
+
+ * public class TreeNode {
+
+ *     int val;
+
+ *     TreeNode left;
+
+ *     TreeNode right;
+
+ *     TreeNode(int x) { val = x; }
+
+ * }
+
+ */
+
+public class Solution {
+
+    private List<List<Integer>> result = new ArrayList<List<Integer>>();
+
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+
+        helper(new ArrayList<Integer>(), root, sum);
+
+    return result;
+
+    }
+
+    private void helper(List<Integer> list, TreeNode root, int sum) {
+
+    if (root == null) return;
+
+    list.add(root.val);
+
+    sum -= root.val;
+
+    if (root.left == null && root.right == null) {
+
+        if (sum == 0) result.add(list);
+
+        return;
+
+    }
+
+    helper(new ArrayList<Integer>(list), root.left, sum);
+
+    helper(new ArrayList<Integer>(list), root.right, sum);
+
+}
+
+}
+/*Unique Binary Search trees | all possible binary search tress for given n….i.e. between 1 and n*/
+/**
+
+ * Definition for a binary tree node.
+
+ * public class TreeNode {
+
+ *     int val;
+
+ *     TreeNode left;
+
+ *     TreeNode right;
+
+ *     TreeNode(int x) { val = x; }
+
+ * }
+
+ */
+
+ /*
+
+ I start by noting that 1..n is the in-order traversal for any BST with nodes 1 to n. So if I pick i-th node as my root, the left subtree will contain elements 1 to (i-1), and the right subtree will contain elements (i+1) to n. I use recursive calls to get back all possible trees for left and right subtrees and combine them in all possible ways with the root.
+
+ */
+
+public class Solution {
+
+    public List<TreeNode> generateTrees(int n) {
+
+                return generateSubtrees(1,n);
+
+    }
+
+   private List<TreeNode> generateSubtrees(int s, int e) {
+
+    List<TreeNode> res = new LinkedList<TreeNode>();
+
+    if (s > e) {
+
+        res.add(null); // empty tree
+
+        return res;
+
+    }
+
+
+
+    for (int i = s; i <= e; ++i) {
+
+        List<TreeNode> leftSubtrees = generateSubtrees(s, i - 1);
+
+        List<TreeNode> rightSubtrees = generateSubtrees(i + 1, e);
+
+
+
+        for (TreeNode left : leftSubtrees) {
+
+            for (TreeNode right : rightSubtrees) {
+
+                TreeNode root = new TreeNode(i);
+
+                root.left = left;
+
+                root.right = right;
+
+                res.add(root);
+
+            }
+
+        }
+
+    }
+
+    return res;
+
+}
+
+}
+/*LinkedList cycle 2 | Linked list cycle 2 | circular linked list | Starting node of cycle (With Explaination)*/
+/**
+
+ * Definition for singly-linked list.
+
+ * class ListNode {
+
+ *     int val;
+
+ *     ListNode next;
+
+ *     ListNode(int x) {
+
+ *         val = x;
+
+ *         next = null;
+
+ *     }
+
+ * }
+
+ */
+
+ /*
+
+ EXPLAINATION:
+
+ Definitions: Cycle = length of the cycle, if exists. C is the beginning of Cycle, S is the distance of slow pointer from C when slow pointer meets fast pointer.
+
+
+
+Distance(slow) = C + S, Distance(fast) = 2 * Distance(slow) = 2 * (C + S). To let slow poiner meets fast pointer, only if fast pointer run 1 cycle more than slow pointer. Distance(fast) - Distance(slow) = Cycle => 2 * (C + S) - (C + S) = Cycle => C + S = Cycle
+
+=> C = Cycle - S => This means if slow pointer runs (Cycle - S) more, it will reaches C. So at this time, if there's another point2 running from head => After C distance, point2 will meet slow pointer at C, where is the beginning of the cycle.
+
+ */
+
+public class Solution {
+
+    public ListNode detectCycle(ListNode head) {
+
+        ListNode slow = head;
+
+                ListNode fast = head;
+
+
+
+                while (fast!=null && fast.next!=null){
+
+                    fast = fast.next.next;
+
+                    slow = slow.next;
+
+
+
+                    if (fast == slow){
+
+                        ListNode slow2 = head; 
+
+                        while (slow2 != slow){
+
+                            slow = slow.next;
+
+                            slow2 = slow2.next;
+
+                        }
+
+                        return slow;
+
+                    }
+
+                }
+
+                return null;
+
+    }
+
+}
+/*Odd Even Linked List | even linked list followed by odd linked list*/
+/**
+
+ * Definition for singly-linked list.
+
+ * public class ListNode {
+
+ *     int val;
+
+ *     ListNode next;
+
+ *     ListNode(int x) { val = x; }
+
+ * }
+
+ */
+
+ 
+
+ /*
+
+ EXPLAINATION:
+
+ We just need to form a linked list of all odd nodes(X) and another linked list of all even nodes(Y). Afterwards, we link Y to the end of X, and return the head of X.
+
+ */
+
+public class Solution {
+
+    public ListNode oddEvenList(ListNode head) {
+
+        if(head == null || head.next == null){
+
+        return head;
+
+    }
+
+    ListNode odd = head;
+
+    ListNode even = head.next;
+
+    ListNode even_head = head.next;
+
+    while(even != null && even.next != null){
+
+        odd.next = odd.next.next;
+
+        even.next = even.next.next;
+
+        odd = odd.next;
+
+        even = even.next;
+
+    }
+
+    odd.next = even_head;
+
+    return head;
+
+    }
+
+}
+/*Different ways to add Parenthesis*/
+public class Solution {
+
+    public List<Integer> diffWaysToCompute(String input) {
+
+        List<Integer> ret = new LinkedList<Integer>();
+
+        for (int i=0; i<input.length(); i++) {
+
+            if (input.charAt(i) == '-' ||
+
+                input.charAt(i) == '*' ||
+
+                input.charAt(i) == '+' ) {
+
+                String part1 = input.substring(0, i);
+
+                String part2 = input.substring(i+1);
+
+                List<Integer> part1Ret = diffWaysToCompute(part1);
+
+                List<Integer> part2Ret = diffWaysToCompute(part2);
+
+                for (Integer p1 :   part1Ret) {
+
+                    for (Integer p2 :   part2Ret) {
+
+                        int c = 0;
+
+                        switch (input.charAt(i)) {
+
+                            case '+': c = p1+p2;
+
+                                break;
+
+                            case '-': c = p1-p2;
+
+                                break;
+
+                            case '*': c = p1*p2;
+
+                                break;
+
+                        }
+
+                        ret.add(c);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        if (ret.size() == 0) {
+
+            ret.add(Integer.valueOf(input));
+
+        }
+
+        return ret;
+
+    }
+
+}
+/*Search in a rotated sorted array 1 (Duplicates are allowed)*/
+public class Solution {
+
+    public boolean search(int[] nums, int target) {
+
+        int start = 0, end = nums.length - 1, mid = -1;
+
+        while(start <= end) {
+
+            mid = (start + end) / 2;
+
+            if (nums[mid] == target) {
+
+                return true;
+
+            }
+
+            //If we know for sure right side is sorted or left side is unsorted
+
+            if (nums[mid] < nums[end] || nums[mid] < nums[start]) {
+
+                if (target > nums[mid] && target <= nums[end]) {
+
+                    start = mid + 1;
+
+                } else {
+
+                    end = mid - 1;
+
+                }
+
+            //If we know for sure left side is sorted or right side is unsorted
+
+            } else if (nums[mid] > nums[start] || nums[mid] > nums[end]) {
+
+                if (target < nums[mid] && target >= nums[start]) {
+
+                    end = mid - 1;
+
+                } else {
+
+                    start = mid + 1;
+
+                }
+
+            //If we get here, that means nums[start] == nums[mid] == nums[end], then shifting out
+
+            //any of the two sides won't change the result but can help remove duplicate from
+
+            //consideration, here we just use end-- but left++ works too
+
+            } else {
+
+                end--;
+
+            }
+
+        }
+
+
+
+        return false;
+
+    }
+
+}
+/*Count of smaller numbers after self | smaller numbers to the right */
+/**/
+/**/
+/**/
+
+
+
 /*Palindrome Permutation
 Given a string, determine if a permutation of the string could form a palindrome.
 For example,
