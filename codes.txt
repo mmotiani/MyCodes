@@ -1,3 +1,322 @@
+/* First Unique Character in a String */
+/*
+s = "leetcode"
+return 0.
+
+s = "loveleetcode",
+return 2.
+*/
+
+public class Solution {
+    public int firstUniqChar(String s) {
+         int freq [] = new int[26];
+        for(int i = 0; i < s.length(); i ++)
+            freq [s.charAt(i) - 'a'] ++;
+        for(int i = 0; i < s.length(); i ++)
+            if(freq [s.charAt(i) - 'a'] == 1)
+                return i;
+        return -1;
+    }
+}
+
+__________________________________________________________________________
+
+/*132 pattern*/
+/*
+Given a sequence of n integers a1, a2, ..., an, a 132 pattern is a subsequence ai, aj, ak such that i < j < k and ai < ak < aj. Design an algorithm that takes a list of n numbers as input and checks whether there is a 132 pattern in the list.
+*/
+
+public class Solution {
+    public boolean find132pattern(int[] nums) {
+         Stack<Pair> stack = new Stack();
+        for(int n: nums)
+        {
+            if(stack.isEmpty() || n <stack.peek().min ) 
+                stack.push(new Pair(n,n));
+            else if(n > stack.peek().min)
+            { 
+                Pair last = stack.pop();
+                if(n < last.max) 
+                    return true;
+                else 
+                {
+                    last.max = n;
+                    while(!stack.isEmpty() && n >= stack.peek().max) 
+                        stack.pop();
+                    // At this time, n < stack.peek().max (if stack not empty)
+                    if(!stack.isEmpty() && stack.peek().min < n) 
+                        return true;
+                    stack.push(last);
+                }
+                
+            }
+        }
+        return false;
+    }
+}
+  class Pair{
+        int min, max;
+        public Pair(int min, int max){
+            this.min = min;
+            this.max = max;
+        }
+}
+__________________________________________________________________________
+
+/*Lexicographical Numbers
+Given an integer n, return 1 - n in lexicographical order.
+For example, given 13, return: [1,10,11,12,13,2,3,4,5,6,7,8,9].
+*/
+/*
+The basic idea is to find the next number to add.
+Take 45 for example: if the current number is 45, the next one will be 450 (450 == 45 * 10)(if 450 <= n), or 46 (46 == 45 + 1) (if 46 <= n) or 5 (5 == 45 / 10 + 1)(5 is less than 45 so it is for sure less than n).
+We should also consider n = 600, and the current number = 499, the next number is 5 because there are all "9"s after "4" in "499" so we should divide 499 by 10 until the last digit is not "9".
+It is like a tree, and we are easy to get a sibling, a left most child and the parent of any node.
+*/
+public class Solution {
+    public List<Integer> lexicalOrder(int n) {
+         List<Integer> list = new ArrayList<>(n);
+        int curr = 1;
+        for (int i = 1; i <= n; i++) {
+            list.add(curr);
+            if (curr * 10 <= n) {
+                curr *= 10;
+            } else if (curr % 10 != 9 && curr + 1 <= n) {
+                curr++;
+            } else {
+                while ((curr / 10) % 10 == 9) {
+                    curr /= 10;
+                }
+                curr = curr / 10 + 1;
+            }
+        }
+        return list;
+    }
+}
+__________________________________________________________________________
+
+/*Ones and Zeroes
+In the computer world, use restricted resource you have to generate maximum benefit is what we always want to pursue.
+For now, suppose you are a dominator of m 0s and n 1s respectively. On the other hand, there is an array with strings consisting of only 0s and 1s.
+Now your task is to find the maximum number of strings that you can form with given m 0s and n 1s. Each 0 and 1 can be used at most once.
+Note: 
+1. The given numbers of 0s and 1s will both not exceed 100
+2. The size of given string array won't exceed 600.
+
+Example 1: 
+Input: Array = {"10", "0001", "111001", "1", "0"}, m = 5, n = 3
+Output: 4
+
+Explanation: This are totally 4 strings can be formed by the using of 5 0s and 3 1s, which are “10,”0001”,”1”,”0”
+
+Example 2: 
+Input: Array = {"10", "0", "1"}, m = 1, n = 1
+Output: 2
+
+Explanation: You could form "10", but then you'd have nothing left. Better form "0" and "1".
+*/
+public class Solution {
+    public int findMaxForm(String[] strs, int m, int n) {
+        int[][] dp = new int[m+1][n+1];
+    for (String s : strs) {
+        int[] count = count(s);
+        for (int i=m;i>=count[0];i--) 
+            for (int j=n;j>=count[1];j--) 
+                dp[i][j] = Math.max(1 + dp[i-count[0]][j-count[1]], dp[i][j]);
+    }
+    return dp[m][n];
+    }
+    public int[] count(String str) {
+    int[] res = new int[2];
+    for (int i=0;i<str.length();i++)
+        res[str.charAt(i) - '0']++;
+    return res;
+ }
+}
+__________________________________________________________________________
+
+/*Search in a rotated sorted array*/
+class Solution {
+public:
+    int search(int A[], int n, int target) {
+        int lo=0,hi=n-1;
+        // find the index of the smallest value using binary search.
+        // Loop will terminate since mid < hi, and lo or hi will shrink by at least 1.
+        // Proof by contradiction that mid < hi: if mid==hi, then lo==hi and loop would have been terminated.
+        while(lo<hi){
+            int mid=(lo+hi)/2;
+            if(A[mid]>A[hi]) lo=mid+1;
+            else hi=mid;
+        }
+        // lo==hi is the index of the smallest value and also the number of places rotated.
+        int rot=lo;
+        lo=0;hi=n-1;
+        // The usual binary search and accounting for rotation.
+        while(lo<=hi){
+            int mid=(lo+hi)/2;
+            int realmid=(mid+rot)%n;
+            if(A[realmid]==target)return realmid;
+            if(A[realmid]<target)lo=mid+1;
+            else hi=mid-1;
+        }
+        return -1;
+    }
+}
+__________________________________________________________________________
+
+/*H-Index (citation)*/
+public class Solution {
+    public int hIndex(int[] citations) {
+        if (citations == null || citations.length == 0) return 0;
+        Arrays.sort(citations);
+        int len = citations.length;
+        for (int i = 0; i < citations.length; i++) {
+            if (len <= citations[i])
+                return len;
+            else
+                len--;
+        }
+        return len;
+    }
+}
+__________________________________________________________________________
+
+/*H-Index II (citation)*/
+public class Solution {
+    public int hIndex(int[] citations) {
+         if(citations == null || citations.length == 0) return 0;
+        int l = 0, r = citations.length;
+        int n = citations.length;
+        while(l < r){
+            int mid = l + (r - l) / 2;
+            if(citations[mid] == n - mid) return n - mid;
+            if(citations[mid] < citations.length - mid) l = mid + 1;
+            else r = mid;
+        }
+        return n - l;
+    }
+}
+__________________________________________________________________________
+
+/*Validate IP address IPv4 or IPv6*/
+
+public class Solution {
+    public String validIPAddress(String IP) {
+        if(isValidIPv4(IP)) return "IPv4";
+	else if(isValidIPv6(IP)) return "IPv6";
+	else return "Neither";
+    }
+    public boolean isValidIPv4(String ip) {
+	if(ip.length()<7) return false;
+	if(ip.charAt(0)=='.') return false;
+	if(ip.charAt(ip.length()-1)=='.') return false;
+	String[] tokens = ip.split("\\.");
+	if(tokens.length!=4) return false;
+	for(String token:tokens) {
+		if(!isValidIPv4Token(token)) return false;
+	}
+	return true;
+}
+public boolean isValidIPv4Token(String token) {
+	if(token.startsWith("0") && token.length()>1) return false;
+	try {
+		int parsedInt = Integer.parseInt(token);
+		if(parsedInt<0 || parsedInt>255) return false;
+		if(parsedInt==0 && token.charAt(0)!='0') return false;
+	} catch(NumberFormatException nfe) {
+		return false;
+	}
+	return true;
+}
+	
+public boolean isValidIPv6(String ip) {
+	if(ip.length()<15) return false;
+	if(ip.charAt(0)==':') return false;
+	if(ip.charAt(ip.length()-1)==':') return false;
+	String[] tokens = ip.split(":");
+	if(tokens.length!=8) return false;
+	for(String token: tokens) {
+		if(!isValidIPv6Token(token)) return false;
+	}
+	return true;
+}
+public boolean isValidIPv6Token(String token) {
+	if(token.length()>4 || token.length()==0) return false;
+	char[] chars = token.toCharArray();
+	for(char c:chars) {
+		boolean isDigit = c>=48 && c<=57;
+		boolean isUppercaseAF = c>=65 && c<=70;
+		boolean isLowerCaseAF = c>=97 && c<=102;
+		if(!(isDigit || isUppercaseAF || isLowerCaseAF)) 
+			return false;
+	}
+	return true;
+}
+}
+__________________________________________________________________________
+
+/*Remove K Digits from a number to make it smaller
+Example 1:
+Input: num = "1432219", k = 3
+Output: "1219"
+Explanation: Remove the three digits 4, 3, and 2 to form the new number 1219 which is the smallest.
+
+Example 2:
+Input: num = "10200", k = 1
+Output: "200"
+Explanation: Remove the leading 1 and the number is 200. Note that the output must not contain leading zeroes.
+
+Example 3:
+Input: num = "10", k = 2
+Output: "0"
+Explanation: Remove all the digits from the number and it is left with nothing which is 0.
+*/
+public class Solution {
+    public String removeKdigits(String num, int k) {
+        int length = num.length();
+        
+         //corner case
+        if(length==k)
+            return "0";
+            
+        Stack<Character> stack = new Stack<>();
+        int index;
+        for(index=0;index<length;index++)
+        {
+             //whenever meet a digit which is less than the previous digit, discard the previous one
+            while(k>0 && !stack.isEmpty() && stack.peek()>num.charAt(index))
+            {
+                stack.pop();
+                k--;
+            }
+            stack.push(num.charAt(index));
+        }
+        
+        // corner case like "1111"
+        while(k>0)
+        {
+            stack.pop();
+            k--;
+        }
+        
+        //construct the number from the stack
+        StringBuilder result = new StringBuilder();
+        while(!stack.isEmpty())
+        {
+            result.append(stack.pop());
+        }
+        result.reverse();
+        
+        //remove all the 0 at the head
+        while(result.length()>1 && result.charAt(0)=='0')
+        {
+            result.deleteCharAt(0);
+        }
+        return result.toString();
+    }
+}
+__________________________________________________________________________
+
 /*Range addition*/
 /*
 Assume you have an array of length n initialized with all 0's and are given k update operations.
