@@ -1,3 +1,88 @@
+
+/*Longest Palindromic substring*/
+
+public class Solution {
+private int lo, maxLen;
+
+public String longestPalindrome(String s) {
+	int len = s.length();
+	if (len < 2)
+		return s;
+	
+    for (int i = 0; i < len-1; i++) {
+     	extendPalindrome(s, i, i);  //assume odd length, try to extend Palindrome as possible
+     	extendPalindrome(s, i, i+1); //assume even length.
+    }
+    return s.substring(lo, lo + maxLen);
+}
+
+private void extendPalindrome(String s, int j, int k) {
+	while (j >= 0 && k < s.length() && s.charAt(j) == s.charAt(k)) {
+		j--;
+		k++;
+	}
+	if (maxLen < k - j - 1) {
+		lo = j + 1;
+		maxLen = k - j - 1;
+	}
+}}
+
+__________________________________________________________________________
+
+/* Read N Characters Given Read4*/
+public int read(char[] buf, int n) {
+  boolean eof = false;      // end of file flag
+  int total = 0;            // total bytes have read
+  char[] tmp = new char[4]; // temp buffer
+  
+  while (!eof && total < n) {
+    int count = read4(tmp);
+    
+    // check if it's the end of the file
+    eof = count < 4;
+    
+    // get the actual count
+    count = Math.min(count, n - total);
+    
+    // copy from temp buffer to buf
+    for (int i = 0; i < count; i++) 
+      buf[total++] = tmp[i];
+  }
+  
+  return total;
+}
+__________________________________________________________________________
+
+/*Distance of non-zero number from nearest zero */
+/*for every non-zero element in array, find its distance to the nearest zero*/
+
+public static void zeroDistance (int [] a) {
+    // closest == -1 means no zero was found yet
+    int closest = -1;
+    for (int i=0 ; i<a.length ; i++) 
+       if (a[i] == 0) 
+           closest = 0;
+       else {         
+           // short version
+           // a[i] = closest == -1 ? Integer.MAX_VALUE : ++closest;
+
+           // simpler version for your to understand
+           if (closest == -1) 
+               a[i] = Integer.MAX_VALUE;
+           else {
+               closest++;
+               a[i] = closest;
+           }                    
+       }
+    closest = -1;
+    for (int i=a.length-1 ; i>=0 ; i--) 
+       if (a[i] == 0)                            
+           closest = 0;
+       else if (closest != -1 && a[i] > ++closest) 
+           a[i] = closest;       
+}
+__________________________________________________________________________
+
 /* First Unique Character in a String */
 /*
 s = "leetcode"
