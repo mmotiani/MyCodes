@@ -1,3 +1,52 @@
+/*Populating the next right pointer I and II*/
+
+/**
+ * Definition for binary tree with next pointer.
+ * public class TreeLinkNode {
+ *     int val;
+ *     TreeLinkNode left, right, next;
+ *     TreeLinkNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        if(root==null)
+        return;
+ 
+    LinkedList<TreeLinkNode> nodeQueue = new LinkedList<TreeLinkNode>();
+    LinkedList<Integer> depthQueue = new LinkedList<Integer>();
+ 
+    if(root!=null){
+        nodeQueue.offer(root);
+        depthQueue.offer(1);
+    }
+ 
+    while(!nodeQueue.isEmpty()){
+        TreeLinkNode topNode = nodeQueue.poll();
+        int depth = depthQueue.poll();
+ 
+        if(depthQueue.isEmpty()){
+            topNode.next = null;
+        }else if(depthQueue.peek()>depth){
+            topNode.next = null;
+        }else{
+            topNode.next = nodeQueue.peek();
+        }
+ 
+        if(topNode.left!=null){
+            nodeQueue.offer(topNode.left);
+            depthQueue.offer(depth+1);
+        }
+ 
+        if(topNode.right!=null){
+            nodeQueue.offer(topNode.right);
+            depthQueue.offer(depth+1);
+        }        
+    }
+    }
+}
+__________________________________________________________________________
+
 /*Decode ways*/
 public int numDecodings(String s) {
     if(s==null || s.length()==0 || s.charAt(0)=='0')
