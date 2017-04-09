@@ -1,3 +1,44 @@
+/*Design Phone Directory*/
+/**
+Design a Phone Directory which supports the following operations:
+
+get: Provide a number which is not assigned to anyone.
+check: Check if a number is available or not.
+release: Recycle or release a number.
+**/
+Set<Integer> used = new HashSet<Integer>();
+    Queue<Integer> available = new LinkedList<Integer>();
+    int max;
+    public PhoneDirectory(int maxNumbers) {
+        max = maxNumbers;
+        for (int i = 0; i < maxNumbers; i++) {
+            available.offer(i);
+        }
+    }
+    
+    public int get() {
+        Integer ret = available.poll();
+        if (ret == null) {
+            return -1;
+        }
+        used.add(ret);
+        return ret;
+    }
+    
+    public boolean check(int number) {
+        if (number >= max || number < 0) {
+            return false;
+        }
+        return !used.contains(number);
+    }
+    
+    public void release(int number) {
+        if (used.remove(number)) {
+            available.offer(number);
+        }
+    }
+__________________________________________________________________________
+
 /*Design Tic Tac Toe*/
 /**
 Initially, I had not read the Hint in the question and came up with an O(n) solution. After reading the extremely helpful hint; a much easier approach became apparent. The key observation is that in order to win Tic-Tac-Toe you must have the entire row or column. Thus, we don't need to keep track of an entire n^2 board. We only need to keep a count for each row and column. If at any time a row or column matches the size of the board then that player has won.
