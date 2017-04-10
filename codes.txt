@@ -1,3 +1,68 @@
+/*Bottom Left tree value (Iterative)*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public int findBottomLeftValue(TreeNode root) {
+         Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+        root = queue.poll();
+        if (root.right != null)
+            queue.add(root.right);
+        if (root.left != null)
+            queue.add(root.left);
+    }
+    return root.val;
+    }
+}
+__________________________________________________________________
+/*Bottom Left tree value (Recursive)*/
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    
+    int maxlevel =0; 
+    int nodeData =0;
+    public int findBottomLeftValue(TreeNode root) {
+        
+        findDeepest(root, maxlevel, 1, this.nodeData);
+        //System.out.println("Node data before returning: "+ nodeData);
+        return this.nodeData;
+    }
+
+    public void findDeepest(TreeNode root, int maxlevel, int level, int nodeData)
+    {
+        if (level > this.maxlevel)
+        {
+            this.nodeData = root.val;
+            this.maxlevel = level;
+        }
+        
+        if(root.left!=null)
+            findDeepest(root.left, this.maxlevel, level+1, this.nodeData);    
+        
+        if(root.right!=null)
+             findDeepest(root.right, this.maxlevel, level+1, this.nodeData); 
+    }
+    
+}
+__________________________________________________________________________
+
 /*Encode and Decode TinyURL*/
 /**
  below is the tiny url solution in java, also this is the similar method in industry. In industry, most of shorten url service is by database, one auto increasing long number as primary key. whenever a long url need to be shorten, append to the database, and return the primary key number. (the database is very easy to distribute to multiple machine like HBase, or even you can use the raw file system to store data and improve performance by shard and replica).
