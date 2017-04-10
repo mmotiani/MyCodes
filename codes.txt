@@ -1,3 +1,41 @@
+/*Copy List with Random Pointer*/
+/**
+ * Definition for singly-linked list with a random pointer.
+ * class RandomListNode {
+ *     int label;
+ *     RandomListNode next, random;
+ *     RandomListNode(int x) { this.label = x; }
+ * };
+ */
+public class Solution {
+    public RandomListNode copyRandomList(RandomListNode head) {
+        if(head==null)
+            return head;
+        
+        Map<RandomListNode,RandomListNode> randomPointer = new HashMap<>();
+        RandomListNode current=head;
+        while(current!=null)
+        {
+            RandomListNode temp = new RandomListNode(current.label);
+            temp.next=null;
+            temp.random=null;
+            randomPointer.put(current,temp);
+            current=current.next;
+        }
+        current=head;
+        while(current!=null)
+        {
+            RandomListNode temp = randomPointer.get(current);
+            temp.next=randomPointer.get(current.next);
+            temp.random=randomPointer.get(current.random);
+            current=current.next;
+        }
+        return randomPointer.get(head);
+    }
+}
+
+__________________________________________________________________________
+
 /*Bottom Left tree value (Iterative)*/
 /**
  * Definition for a binary tree node.
