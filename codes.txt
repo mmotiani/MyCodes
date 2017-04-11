@@ -1,3 +1,32 @@
+/*Battleships in a board*/
+
+/**
+ * 
+ * There are three rules to tell if a cell is a 'head':
+
+The cell is a 'X' (board[i][j] == 'X')
+No left side neighbor, or the left neighbor is a '.' (i == 0 || board[i - 1][j] == '.')
+No right side neighbor, or the right neighbor is a '.' (j == 0 || board[i][j - 1] == '.')
+
+ * 
+ **/
+public class Solution {
+    public int countBattleships(char[][] board) {
+         if (board == null || board.length == 0 || board[0].length == 0) return 0;
+	int R = board.length, C = board[0].length, count = 0;
+	for (int i = 0; i < R; i++) {
+		for (int j = 0; j < C; j++) {
+			if (board[i][j] == 'X' && (i == 0 || board[i - 1][j] == '.') && (j == 0 || board[i][j - 1] == '.'))
+				count++;
+		}
+	}
+	
+	return count;
+    }
+}
+
+_____________________________________________________________________
+
 /*reverse words in a string in space/ reverse words in a sentence without using extra space*/
 
 public class Solution {
