@@ -1,3 +1,42 @@
+/*reverse words in a string in space/ reverse words in a sentence without using extra space*/
+
+public class Solution {
+    public void reverseWords(char[] s) {
+        
+        if(s==null || s.length < 1)
+            return;
+        
+        reverse(s, 0, s.length-1);
+        
+        //System.out.println(" reversed string : " + s);
+        int start = 0;
+        
+        for(int i=0; i< s.length; i++)
+        {
+            if(s[i] == ' ')
+            {
+                reverse(s, start, i-1);
+                start = i+1;
+            }
+        }
+        reverse(s, start, s.length-1);
+    }
+    
+    public void reverse(char[] s, int start, int end)
+    {
+        while(start < end)
+        {
+            char c = s[start];
+            s[start] = s[end];
+            s[end] = c;
+            
+            start++;
+            end--;
+        }
+    }
+}
+_____________________________________________________________________
+
 /*Water Jug Problem*/
 /**
 You are given two jugs with capacities x and y litres. There is an infinite amount of water supply available. You need to determine whether it is possible to measure exactly z litres using these two jugs.
