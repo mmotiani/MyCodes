@@ -1,3 +1,15 @@
+/*GCD of two number*/
+public int GCD(int a, int b){
+    while(b != 0 ){
+        int temp = b;
+        b = a%b;
+        a = temp;
+    }
+    return a;
+ }
+ 
+ _____________________________________________________________________
+
 /*Largest BST subtree  SOLUTION 1 (a bit tricky)*/
 /*Largest Binary search tree subtree*/
 /*Largest subtree which is BST in a binary tree*/ 
