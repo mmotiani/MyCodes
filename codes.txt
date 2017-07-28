@@ -1,3 +1,28 @@
+/*CELEBRITY CANDIDATE*/
+
+/* The knows API is defined in the parent class Relation.
+      boolean knows(int a, int b); */
+
+public class Solution extends Relation {
+  //EXPLAINATION:  The first pass is to pick out the candidate. If candidate knows i, then switch candidate. The second pass is to check whether the candidate is real.
+    public int findCelebrity(int n) {
+        int celebrityCandidate = 0;
+        for(int i=1;i<n;i++)
+        {
+            if(knows(celebrityCandidate, i))
+                celebrityCandidate=i;
+        }
+        for(int i=0;i<n;i++)
+        {
+            if(i!=celebrityCandidate && (knows(celebrityCandidate, i) || !knows(i,celebrityCandidate)))
+                return -1;
+        }
+        return celebrityCandidate;
+    }
+}
+
+_____________________________________________________________________
+
 /*Sparse matrix multiplication*/
 public class Solution {
     public int[][] multiply(int[][] A, int[][] B) {
