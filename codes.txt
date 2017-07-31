@@ -1,4 +1,141 @@
+_____________________________________________________________________
 
+public class Solution {
+    public boolean validTree(int n, int[][] edges) {
+        //ALSO CHECK THE BFS SOLUTION 2 EXPLAINED DOWNSTAIRS 
+        // FOR QUESTION, check program creek.
+        
+        // initialize adjacency list
+        List<List<Integer>> adjList = new ArrayList<>();
+        
+         // initialize vertices
+        for(int i=0;i<n;i++)
+            adjList.add(i, new ArrayList<Integer>());
+         
+         // add edges 
+        for(int i=0;i<edges.length;i++)
+        {
+            int u=edges[i][0], v=edges[i][1];
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }
+        
+        boolean[] visited = new boolean[n];
+        
+        // make sure there's no cycle
+        if(hasCycle(adjList, visited, 0, -1)) // 0 represents the first node
+            return false;
+        
+        // make sure all vertices are connected
+        for(int i=0;i<n;i++)
+        {
+            if(!visited[i])
+                return false;
+        }
+        return true;
+    }
+    
+    // check if an undirected graph has cycle started from vertex u
+    public boolean hasCycle(List<List<Integer>> adjList, boolean[] visited, int u, int parent)
+    {
+        visited[u]=true;
+        for(int i=0;i<adjList.get(u).size();i++)
+        {
+            int v = adjList.get(u).get(i);
+            if((visited[v] && parent!=v) || (!visited[v] && hasCycle(adjList, visited, v, u)))
+                return true;
+        }
+        return false;
+    }
+    
+    //SOLUTION 1:ONE MORE SOLUTION using BFS. ABOVE SOLUTION IS WITH DFS. There is one more solution downstairs
+    /*
+    public class Solution {
+    public boolean validTree(int n, int[][] edges) {
+        int[] visited = new int[n];
+        List<List<Integer>> adjList = new ArrayList<>();
+        for (int i=0; i<n; ++i) 
+        {  
+            adjList.add(new ArrayList<Integer>()); 
+        }
+        for (int[] edge: edges) 
+        {
+            adjList.get(edge[0]).add(edge[1]);
+            adjList.get(edge[1]).add(edge[0]);
+        }
+        Deque<Integer> q = new ArrayDeque<>();
+        q.addLast(0); visited[0] = 1;  // vertex 0 is in the queue, being visited
+        while (!q.isEmpty()) 
+        {
+            Integer cur = q.removeFirst();
+            for (Integer succ: adjList.get(cur)) 
+            {
+                if (visited[succ] == 1) 
+                { 
+                    return false;
+                }  // loop detected
+                if (visited[succ] == 0) 
+                { 
+                    q.addLast(succ); visited[succ] = 1; 
+                }
+            }
+            visited[cur] = 2;  // visit completed
+        }
+        for (int v: visited) 
+        { 
+            if (v == 0) 
+            { 
+                return false; 
+            } 
+        }  // # of connected components is not 1
+        return true;
+    }
+}
+    */
+    
+    //SOLUTION 2: ONE MORE BFS (easy to explain)
+    /*
+    public boolean validTree(int n, int[][] edges) {
+    HashMap<Integer, ArrayList<Integer>> map = new HashMap<Integer, ArrayList<Integer>>();
+    for(int i=0; i<n; i++){
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        map.put(i, list);
+    }
+ 
+    for(int[] edge: edges){
+        map.get(edge[0]).add(edge[1]);
+        map.get(edge[1]).add(edge[0]);
+    }
+ 
+    boolean[] visited = new boolean[n];
+ 
+    LinkedList<Integer> queue = new LinkedList<Integer>();
+    queue.offer(0);
+    while(!queue.isEmpty())
+    {
+        int top = queue.poll();
+        if(visited[top])
+            return false;
+ 
+        visited[top]=true;
+ 
+        for(int i: map.get(top))
+        {
+            if(!visited[i])
+                queue.offer(i);
+        }
+    }
+ 
+    for(boolean b: visited)
+    {
+        if(!b)
+            return false;
+    }
+ 
+    return true;
+}
+    */
+}
 _____________________________________________________________________
 
 /*PAINT HOUSE 1 (3 colors)*/
