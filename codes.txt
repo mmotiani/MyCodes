@@ -1,3 +1,57 @@
+_____________________________________________________________________
+
+_____________________________________________________________________
+
+_____________________________________________________________________
+
+_____________________________________________________________________
+
+_____________________________________________________________________
+
+/*Running Median*/
+
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+    public static void main(String args[] ) throws Exception {
+       Scanner sc = new Scanner(System.in);
+        PriorityQueue<Integer> lowers = new PriorityQueue<Integer>(Comparator.reverseOrder());
+        PriorityQueue<Integer> uppers = new PriorityQueue<Integer>();
+        
+        int n = sc.nextInt();
+        for(int i=0; i<n; i++)
+        {
+            int ai=sc.nextInt();
+            if(!lowers.isEmpty() && ai<=lowers.peek())
+                lowers.offer(ai);
+            else
+                uppers.offer(ai);
+            
+            while(lowers.size() > uppers.size())
+            {
+                uppers.offer(lowers.poll());
+            }
+            while(uppers.size()-lowers.size()>1)
+            {
+                lowers.offer(uppers.poll());
+            }
+            
+            double median;
+            if(lowers.size()==uppers.size())
+            {
+                median=(lowers.peek()+uppers.peek())/2.0;
+            }
+            else
+                median=uppers.peek();
+            System.out.println(median);
+        }
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT */
+    }
+}
 
 _____________________________________________________________________
 
