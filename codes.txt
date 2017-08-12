@@ -5,6 +5,63 @@ _____________________________________________________________________
 _____________________________________________________________________
 
 _____________________________________________________________________
+/*Contacts (question related to Trie)*/
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Trie trie = new Trie();
+        int n = sc.nextInt();
+        
+        for(int i=0; i<n; i++)
+        {
+            String command=sc.next();
+            if(command.equals("add"))
+            {
+                String name=sc.next();
+                trie.add(name);
+            }
+            else
+            {
+                String partial = sc.next();
+                System.out.println(trie.count(partial));
+            }
+        }
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+    }
+}
+class Trie
+{
+    Map<Character, Trie> map = new HashMap<>();
+    int count;
+    
+    void add(String s)
+    {
+        count++;
+        if(s==null || s.length()==0)
+            return;
+        
+        char first = s.charAt(0);
+        if(!map.containsKey(first))
+            map.put(first, new Trie());
+        
+        map.get(first).add(s.substring(1));
+    }
+    
+    int count(String s)
+    {
+        if(s==null||s.length()==0)
+            return count;
+        char first = s.charAt(0);
+        return map.containsKey(first)?map.get(first).count(s.substring(1)) :0;
+    }
+}
 
 _____________________________________________________________________
 
