@@ -3,7 +3,92 @@ _____________________________________________________________________
 _____________________________________________________________________
 
 _____________________________________________________________________
+/*SWAP NODES [ALGO] hackkerank*/
+import java.io.*;
+import java.util.*;
 
+public class Solution {
+   private static class Node{
+		int data;
+		Node left;
+		Node right;
+	}
+
+	public static void inorderTraversal(Node node){
+		if (node == null){
+	        return;
+	    }
+	    inorderTraversal(node.left);
+	    if (node.data != -1){
+	    	System.out.print(node.data+" ");
+	    }
+	    inorderTraversal(node.right);
+	}
+    
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        int nodeCount = Integer.parseInt(reader.readLine());
+	//		0 is the first element; or the node with value 1
+	Node[] nodes = new Node[nodeCount];
+        nodes[0]=new Node();
+        nodes[0].data=1;
+        
+        Map<Node, Integer> depth = new HashMap<Node, Integer>();
+        Map<Integer, List<Node>> lookUp = new HashMap<Integer, List<Node>>();
+        
+        depth.put(nodes[0], 1);
+        lookUp.put(1, new ArrayList<Node>());
+        lookUp.get(1).add(nodes[0]);
+        
+        for(int i=0; i<nodeCount; i++)
+        {
+            int currentDepth = depth.get(nodes[i]);
+            String[] split = reader.readLine().split(" ");
+            Node left=new Node(), right=new Node();
+            left.data=Integer.parseInt(split[0]);
+            right.data=Integer.parseInt(split[1]);
+            
+            if(left.data!=-1)
+            {
+                nodes[i].left=left;
+                nodes[left.data-1]=left;
+                depth.put(left, currentDepth+1);
+                if(lookUp.get(currentDepth+1)==null)
+                    lookUp.put(currentDepth+1, new ArrayList<Node>());
+                lookUp.get(currentDepth+1).add(left);
+            }
+            
+            if(right.data!=-1)
+            {
+                nodes[i].right=right;
+                nodes[right.data-1]=right;
+                depth.put(right, currentDepth+1);
+                if(lookUp.get(currentDepth+1)==null)
+                    lookUp.put(currentDepth+1, new ArrayList<Node>());
+                lookUp.get(currentDepth+1).add(right);
+            }
+        }
+        
+        int swaps = Integer.parseInt(reader.readLine());
+        for(int i=0; i<swaps; i++)
+        {
+            int k = Integer.parseInt(reader.readLine());
+            for(int j=1; lookUp.get(j*k)!=null; j++)
+            {
+                for(Node b : lookUp.get(j*k))
+                {
+                    Node c = b.left;
+                    b.left=b.right;
+                    b.right=c;
+                }
+            }
+            inorderTraversal(nodes[0]);
+            System.out.println();
+        }
+		
+	}
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+}
 _____________________________________________________________________
 /*Contacts (question related to Trie)*/
 import java.io.*;
