@@ -1,7 +1,80 @@
 _____________________________________________________________________
 
 _____________________________________________________________________
+/*Maximum length of pair chain*/
 
+public class Solution {
+    public int findLongestChain(int[][] pairs) {
+        
+        /*
+        This problem is a variation of standard Longest Increasing Subsequence problem. Following is a simple two step process.
+1) Sort given pairs in increasing order of first (or smaller) element.
+2) Now run a modified LIS process where we compare the second element of already finalized LIS with the first element of new LIS being constructed.
+        */
+        
+        if(pairs==null || pairs.length==0)
+            return 0;
+        Arrays.sort(pairs, (a,b)->(a[0]-b[0]));
+        
+        int n=pairs.length;
+        int[] dp = new int[n];
+        
+        /* Initialize MCL (max chain length) values for all indexes */
+        for(int i=0; i<n; i++)
+        {
+            dp[i]=1;
+        }
+        
+        /* Compute optimized chain length values in bottom up manner */
+        for(int i=1;i<n;i++)
+        {
+            for(int j=0;j<i;j++)
+            {
+                if(pairs[i][0]>pairs[j][1])
+                    dp[i]=dp[j]+1;
+            }
+        }
+        
+        // mcl[i] now stores the maximum chain length ending with pair i
+        
+        /* Pick maximum of all MCL values */
+        int max=0;
+        for(int i=0; i<n; i++)
+        {
+            if(max<dp[i])
+                max=dp[i];
+        }
+        
+        return max;
+    }
+    //ALTERNATIVE SOLUTION USING HEAP
+    /*
+    public class Solution {
+public int findLongestChain(int[][] pairs) {
+if(pairs.length==0) return 0;
+    Arrays.sort(pairs,new Comparator<int[]>(){
+    public int compare(int[] a,int[] b){
+    return a[0]-b[0];
+    }
+});
+PriorityQueue<Integer> pq=new PriorityQueue<Integer>(Collections.reverseOrder());
+pq.offer(pairs[0][1]);
+for(int i=1;i<pairs.length;i++){
+    //if the max number of the chain greater than cur right number, replace the max with the smaller one
+    if(pq.peek()>pairs[i][1]){
+        pq.poll();
+        pq.offer(pairs[i][1]);
+    }
+    else{
+    //add the cur right number if chain can be formed;
+    if(pq.peek()<pairs[i][0]) pq.offer(pairs[i][1]);
+    }
+}
+return pq.size();
+}
+}
+    */
+}
 _____________________________________________________________________
 /*Frequency Sort*/
 
