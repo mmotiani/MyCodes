@@ -9,7 +9,32 @@ _____________________________________________________________________
 _____________________________________________________________________
 
 _____________________________________________________________________
+/*Single Element in the sorted array*/
 
+class Solution {
+    public int singleNonDuplicate(int[] nums) {
+        
+        //EXPLAINATION
+        /*
+        The logic behind this is very easy: for each mid, we try to find understand whether the single number is on the left half. The if header tests that nums[mid] is not single and neither is anything on its left.
+
+if mid is even, then there are 2m numbers on the left of mid. For the statement of nums[mid] is not single and neither is anything on its left to hold, we need the 2m numbers to the left of mid to be m pairs, and also nums[mid] be in a pair with nums[mid + 1]. Indeed, we only have to make sure in this case that nums[mid], nums[mid + 1] is a pair. You can prove by contradiction that as long as this holds, the sole single number can't be on the left of mid. Now that the statement of nums[mid] is not single and neither is anything on its left is proven, we can just go to the right half.
+if mid is odd, then to prove nums[mid] is not single and neither is anything on its left, we only need to prove that nums[mid - 1], nums[mid] is a pair. mid - 1 is even, and as long as nums[mid - 1], nums[mid - 1 + 1] forms a pair, we can actually use the argument of previous paragraph to prove that no entry to the left of mid is single. And neither is mid itself obviously. With nums[mid] is not single and neither is anything on its left proven, we can again to the right half.
+If nums[mid] is not single and neither is anything on its left not provable, then go to left half since the single number is there.
+        */
+        
+       int n = nums.length;
+        int lo = 0, hi = n - 1;
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            if ((mid % 2 == 0 && nums[mid] == nums[mid + 1]) || (mid % 2 == 1 && nums[mid] == nums[mid - 1]))
+                lo = mid + 1;
+            else
+                hi = mid - 1;
+        }
+        return nums[lo];
+    }
+}
 _____________________________________________________________________
 /*Counting 1s bit from 0 to n*/
 class Solution {
