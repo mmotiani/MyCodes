@@ -1,3 +1,1996 @@
+————————————————————————————
+CONTINUOUS SUBARRAY
+————————————————————————————
+
+class Solution {
+    public int findMaxLength(int[] nums) {
+         //EXPLAINATION: The idea is to change 0 in the original array to -1. Thus, if we find SUM[i, j] == 0 then we know there are even number of -1 and 1 between index i and j. Also put the sum to index mapping to a HashMap to make search faster.
+        
+        for(int i=0;i<nums.length;i++)
+        {
+            if(nums[i]==0)
+                nums[i]=-1;
+        }
+        Map<Integer,Integer> map = new HashMap<>();
+        map.put(0,-1);
+        int sum =0 ;
+        int max=0;
+        
+        for(int i=0;i<nums.length;i++)
+        {
+            sum+=nums[i];
+            if(map.containsKey(sum))
+            {
+                max=Math.max(max, i-map.get(sum));
+            }
+            else
+                map.put(sum,i);
+        }
+        return max;
+    }
+}
+
+
+————————————————————————————
+Construct Binary Tree from Inorder and Postorder Traversal
+————————————————————————————
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        int inStart = 0;
+	int inEnd = inorder.length - 1;
+	int postStart = 0;
+	int postEnd = postorder.length - 1;
+ 
+	return buildTree(inorder, inStart, inEnd, postorder, postStart, postEnd);
+    }
+    
+    public TreeNode buildTree(int[] inorder, int inStart, int inEnd,
+		int[] postorder, int postStart, int postEnd) {
+	if (inStart > inEnd || postStart > postEnd)
+		return null;
+ 
+	int rootValue = postorder[postEnd];
+	TreeNode root = new TreeNode(rootValue);
+ 
+	int k = 0;
+	for (int i = 0; i < inorder.length; i++) {
+		if (inorder[i] == rootValue) {
+			k = i;
+			break;
+		}
+	}
+ 
+	root.left = buildTree(inorder, inStart, k - 1, postorder, postStart,
+			postStart + k - (inStart + 1));
+	// Becuase k is not the length, it it need to -(inStart+1) to get the length
+	root.right = buildTree(inorder, k + 1, inEnd, postorder, postStart + k- inStart, postEnd - 1);
+	// postStart+k-inStart = postStart+k-(inStart+1) +1
+ 
+	return root;
+}
+    
+}
+
+————————————————————————————
+Construct Binary Tree from Preorder and Inorder Traversal
+————————————————————————————
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        int preStart = 0;
+    int preEnd = preorder.length-1;
+    int inStart = 0;
+    int inEnd = inorder.length-1;
+ 
+    return construct(preorder, preStart, preEnd, inorder, inStart, inEnd);
+    }
+   public TreeNode construct(int[] preorder, int preStart, int preEnd, int[] inorder, int inStart, int inEnd){
+    if(preStart>preEnd||inStart>inEnd){
+        return null;
+    }
+ 
+    int val = preorder[preStart];
+    TreeNode p = new TreeNode(val);
+ 
+    //find parent element index from inorder
+    int k=0;
+    for(int i=0; i<inorder.length; i++){
+        if(val == inorder[i]){
+            k=i;
+            break;
+        }
+    }
+ 
+    p.left = construct(preorder, preStart+1, preStart+(k-inStart), inorder, inStart, k-1);
+    p.right= construct(preorder, preStart+(k-inStart)+1, preEnd, inorder, k+1 , inEnd);
+ 
+    return p;
+}
+}
+
+————————————————————————————
+Sum Root to Leaf Numbers
+————————————————————————————
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    int output = 0;
+    public int sumNumbers(TreeNode root) {
+        if(root == null)
+            return 0;
+        return helper(root,"");
+    }
+    public int helper(TreeNode root,String s){
+        if(root == null){
+            return 0;
+        }
+        s = s + Integer.toString(root.val);
+        helper(root.left,s);
+        helper(root.right,s);
+        if(root.left == null && root.right == null){
+            output = output + Integer.parseInt(s);
+        }
+        return output;
+    }
+}
+
+————————————————————————————
+Sum of Root To Leaf Binary Numbers
+————————————————————————————
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int sumRootToLeaf(TreeNode root) {
+         if(root==null)
+            return -1;
+        List<String> list = new ArrayList<>();
+        helper(root, list, "");
+        return evaluate(list);
+    }
+    public void helper(TreeNode root, List<String> list, String data)
+    {
+        if(root==null)
+            return;
+
+        helper(root.left, list, data+String.valueOf(root.val));
+        helper(root.right, list, data+String.valueOf(root.val));
+                if(root.left==null && root.right==null)
+            list.add(data+String.valueOf(root.val));
+    }
+    
+    public int evaluate(List<String> list)
+    {
+        int sum=0;
+        for(String str : list)
+        {
+            char[] ch = str.toCharArray();
+            int decimal=0;
+            int count=0;
+            for(int i=ch.length-1;i>=0;i--)
+            {
+                int a = Character.getNumericValue(ch[i]);
+                decimal += a*Math.pow(2, count);
+                count++;
+            }
+            sum+=decimal;
+        }
+        return sum;
+    }
+}
+
+
+————————————————————————————
+Combination Sum
+————————————————————————————
+class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+         ArrayList<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(candidates); // need sort to make this work.
+        backtrack(result, new ArrayList<Integer>(), 0, target, candidates);
+        return result;
+    }
+    public void backtrack(ArrayList<List<Integer>> result, ArrayList<Integer> list, int start, int target, int[] candidates)
+    {
+        if(target<0) /** no solution */
+            return;
+        else if(target==0) //recursion exit.
+            result.add(new ArrayList<>(list));
+        else
+        {
+            for(int i=start; i<candidates.length; i++)
+            {
+                list.add(candidates[i]);
+                backtrack(result, list, i, target-candidates[i], candidates);  // not i + 1 because we can reuse same elements
+                list.remove(list.size()-1); //So the point of list.remove(list.size() - 1) is, after each "fail" or "success", since we don't need to do further attempts given such a condition, we delete the last element, and then end current backtracking.
+            }
+        }
+    }
+}
+
+
+————————————————————————————
+Combination Sum II
+————————————————————————————
+
+class Solution {
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        ArrayList<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(candidates); // need sort to make this work.
+        backtrack(candidates, new ArrayList<>(), 0, target, result);
+        return result;
+    }
+    public void backtrack(int[] candidates, ArrayList<Integer> list, int start, int target, ArrayList<List<Integer>> result)
+    {
+        if(target<0) /** no solution */
+            return;
+        else if(target==0) //recursion exit.
+            result.add(new ArrayList<Integer>(list));
+        else
+        {
+            for(int i=start; i<candidates.length;i++)
+            {
+                if(i>start && candidates[i]==candidates[i-1]) // skip duplicates
+                    continue;
+                list.add(candidates[i]);
+                backtrack(candidates, list, i+1, target-candidates[i], result);
+                list.remove(list.size()-1); //So the point of list.remove(list.size() - 1) is, after each "fail" or "success", since we don't need to do further attempts given such a condition, we delete the last element, and then end current backtracking.
+            }
+        }
+    }
+}
+
+————————————————————————————
+Combination Sum III
+————————————————————————————
+class Solution {
+  public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> result = new ArrayList<>();
+        backtrack(result, new ArrayList<Integer>(), k, 1, n);
+        return result;
+    }
+    public void backtrack(List<List<Integer>> result, ArrayList<Integer> list, int k, int start, int n)
+    {
+        if(list.size()==k && n==0) //recursion exit.
+        {
+            result.add(new ArrayList<Integer>(list));
+            return;
+        }
+        for(int i=start;i<=9;i++)
+        {
+            list.add(i);
+            backtrack(result, list, k, i+1, n-i);
+            list.remove(list.size()-1); //So the point of list.remove(list.size() - 1) is, after each "fail" or "success", since we don't need to do further attempts given such a condition, we delete the last element, and then end current backtracking.
+        }
+    }
+}
+
+
+————————————————————————————
+Combination Sum IV
+————————————————————————————
+
+public class Solution {
+    //Explaination: The DP solution goes through every possible sum from 1 to target one by one.
+//Using recursion can skip those sums that are not the combinations of the numbers in the given array. Also, there is no need to sort the array first.
+    
+    Map<Integer, Integer> map = new HashMap<>();
+    
+    public int combinationSum4(int[] nums, int target) {
+        int count=0;
+        if(nums==null || nums.length==0 || target<0)
+            return 0;
+        if(target==0)
+            return 1;
+        if(map.containsKey(target))
+            return map.get(target);
+        for(int num:nums)
+            count += combinationSum4(nums, target-num);
+        map.put(target, count);
+        return count;
+    }
+    
+    // DP SOLUTION
+    
+    /*
+        //state: f[i] is when sum is i, the number of combinations
+    //function: f[i] = f[i] + f[i - nums[i]] (i >= nums[i])
+    //initialize: f[0] = 1;
+    //result: f[target];
+    public int combinationSum4(int[] nums, int target) {
+        Arrays.sort(nums);
+        
+        int[] f = new int[target + 1];
+        //when target and num is the equal，there is only one solution, it is to pick the only one number
+        f[0] = 1;
+        for (int i = 1; i <= target; i++) {
+            for (int num : nums) {
+                if (i >= num) {
+                    //if we want to add num to sum and make the combination equal to target，
+                    //then the sum should be i - num. f[i - num] is  the number of combinations
+                    //when sum is equal to i - num. So after we add num, the sum will be i, 
+                    //which is what we want here. we iterate all possible num to get all cases 
+                    //which can be added up to i.
+                    f[i] += f[i - num];
+                }
+            }
+        }
+        return f[target];
+    */
+}
+
+————————————————————————————
+Subsets
+————————————————————————————
+
+public class Solution {
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(nums);
+        helper(result, new ArrayList<>(), nums, 0);
+        return result;
+    }
+    public void helper(List<List<Integer>> result, List<Integer> temp, int[] nums, int index)
+    {
+        result.add(new ArrayList<>(temp));
+        for(int i=index; i<nums.length; i++)
+        {
+            temp.add(nums[i]);
+            helper(result, temp, nums, i+1);
+            temp.remove(temp.size()-1); //So the point of temp.remove(list.size() - 1) is, after each "fail" or "success", since we don't need to do further attempts given such a condition, we delete the last element, and then end current backtracking.
+        }
+    }
+
+}
+
+————————————————————————————
+Subsets II
+————————————————————————————
+
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        List<List<Integer>> list = new ArrayList<>();
+    Arrays.sort(nums);
+    backtrack(list, new ArrayList<>(), nums, 0);
+    return list;
+}
+
+private void backtrack(List<List<Integer>> list, List<Integer> tempList, int [] nums, int start){
+    list.add(new ArrayList<>(tempList));
+    for(int i = start; i < nums.length; i++){
+        if(i > start && nums[i] == nums[i-1]) continue; // skip duplicates
+        tempList.add(nums[i]);
+        backtrack(list, tempList, nums, i + 1);
+        tempList.remove(tempList.size() - 1);
+    }
+    }
+}
+
+————————————————————————————
+Permutations
+————————————————————————————
+
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+    List<List<Integer>> result = new ArrayList<>();
+    helper(0, nums, result);
+    return result;
+}
+ 
+private void helper(int start, int[] nums, List<List<Integer>> result){
+    if(start==nums.length-1){
+        ArrayList<Integer> list = new ArrayList<>();
+        for(int num: nums){
+            list.add(num);
+        }
+        result.add(list);
+        return;
+    }
+    for(int i=start; i<nums.length; i++){
+        swap(nums, i, start);
+        helper(start+1, nums, result);
+        swap(nums, i, start);
+    }
+}
+ 
+private void swap(int[] nums, int i, int j){
+    int temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+}
+}
+
+————————————————————————————
+Permutations II
+————————————————————————————
+
+class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+    List<List<Integer>> result = new ArrayList<>();
+    helper(0, nums, result);
+    return result;
+}
+ 
+private void helper(int start, int[] nums, List<List<Integer>> result){
+    if(start==nums.length-1){
+        ArrayList<Integer> list = new ArrayList<>();
+        for(int num: nums){
+            list.add(num);
+        }
+        result.add(list);
+        return;
+    }
+ 
+    HashSet<Integer> set = new HashSet<>();
+ 
+    for(int i=start; i<nums.length; i++){
+        if(set.contains(nums[i])){
+            continue;
+        }
+        set.add(nums[i]);
+ 
+        swap(nums, i, start);
+        helper(start+1, nums, result);
+        swap(nums, i, start);
+    }
+}
+ 
+private void swap(int[] nums, int i, int j){
+    int temp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = temp;
+}
+}
+
+————————————————————————————
+Largest Rectangle in Histogram
+————————————————————————————
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        if(heights==null || heights.length==0)
+            return 0;
+        
+        Stack<Integer> stack = new Stack<>();
+        int i=0;
+        int n = heights.length;
+        int maxArea=0;
+        int area=0;
+        while(i<n)
+        {
+            //push index to stack when the current height is larger than the previous one
+            if(stack.isEmpty() || heights[stack.peek()]<heights[i])
+            {
+                stack.push(i);
+                i++;
+            }
+            else
+            {
+                //calculate max value when the current height is less than the previous one
+                int top = stack.pop();
+                if(stack.isEmpty())
+                {
+                    area=heights[top]*i;
+                }
+                else
+                {
+                    area=heights[top]*(i-stack.peek()-1);
+                }
+                if(area>maxArea)
+                    maxArea=area;
+            }
+        }
+        
+        while(!stack.isEmpty())
+        {
+            int top=stack.pop();
+            if(stack.isEmpty())
+            {
+                area=heights[top]*i;
+            }
+            else
+            {
+                area=heights[top]*(i-stack.peek()-1);
+            }
+            if(area>maxArea)
+                maxArea=area;
+        }
+        return maxArea;
+    }
+}
+
+
+————————————————————————————
+LRU Cache
+————————————————————————————
+
+public class Node
+{
+    Node left, right;
+    int key, value;
+}
+class LRUCache {
+    
+    HashMap<Integer, Node> map;
+    int capacity;
+    Node start, end;
+    public LRUCache(int capacity) {
+        this.capacity=capacity;
+        map=new HashMap<>();
+    }
+    
+    public int get(int key) {
+        if(map.containsKey(key))
+        {
+            Node entry = map.get(key);
+            RemoveNode(entry);
+            AddAtTop(entry);
+            return entry.value;
+        }
+        else
+            return -1;
+    }
+    
+    public void RemoveNode(Node entry)
+    {
+        if(entry.left!=null)
+        {
+            entry.left.right=entry.right;
+        }
+        else
+        {
+            start = entry.right;
+        }
+        
+        
+        if(entry.right!=null)
+        {
+            entry.right.left=entry.left;
+        }
+        else
+        {
+            end = entry.left;
+        }
+        
+    }
+    
+    public void AddAtTop(Node entry)
+    {
+        entry.right=null;
+        entry.left=null;
+        
+        // if(start==null && end==null){
+        //     start = entry;
+        //     end = entry;
+        //     return;
+        // }
+        if(start==null)
+            start=entry;
+        if(end==null)
+            end=entry;
+        
+        else{
+        start.left=entry;
+        entry.right=start;
+        start=entry;
+        }
+    }
+    
+    public void put(int key, int value) {
+        if(map.containsKey(key))
+        {
+            Node entry = map.get(key);
+            entry.value=value;
+            RemoveNode(entry);
+            AddAtTop(entry);
+        }
+        else
+        {
+            Node entry = new Node();
+            entry.right=null;
+            entry.left=null;
+            entry.key=key;
+            entry.value=value;
+            
+            if(map.size()>capacity)
+            {
+                map.remove(end.key);
+                RemoveNode(end);
+                AddAtTop(entry);
+            }
+            else
+            {
+                AddAtTop(entry);
+            }
+            
+            map.put(key, entry);
+        }
+    }
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
+
+————————————————————————————
+Implement Trie (Prefix Tree)
+————————————————————————————
+
+class Trie {
+    
+    private class TrieNode {
+        Map<Character, TrieNode> children;
+        boolean endOfWord;
+        public TrieNode() {
+            children = new HashMap<>();
+            endOfWord = false;
+        }
+    }
+    
+    TrieNode root;
+    
+    /** Initialize your data structure here. */
+    public Trie() {
+        root = new TrieNode();
+    }
+    
+    /** Inserts a word into the trie. */
+    public void insert(String word) {
+         TrieNode current = root;
+        for(char c : word.toCharArray()) 
+        {
+            if(! current.children.containsKey(c)) 
+            {
+                TrieNode node = new TrieNode();
+                current.children.put(c, node);
+            }
+            current = current.children.get(c);
+        }
+        current.endOfWord = true;
+    }
+    
+    /** Returns if the word is in the trie. */
+    public boolean search(String word) {
+        
+        TrieNode current = root;
+        for(char c : word.toCharArray()) {
+            if(!current.children.containsKey(c)) {
+                return false;
+            }
+            current = current.children.get(c);
+        }
+       return current.endOfWord;
+    
+    }
+    
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    public boolean startsWith(String prefix) {
+        
+         TrieNode current = root;
+        for(char c : prefix.toCharArray()) {
+            if(!current.children.containsKey(c)) {
+                return false;
+            }
+            current = current.children.get(c);
+        }
+        return true;
+    }
+}
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie obj = new Trie();
+ * obj.insert(word);
+ * boolean param_2 = obj.search(word);
+ * boolean param_3 = obj.startsWith(prefix);
+ */
+
+————————————————————————————
+Design HashMap
+————————————————————————————
+class MyHashMap {
+
+    ListNode[] Nodes;
+    /** Initialize your data structure here. */
+    public MyHashMap() {
+        Nodes = new ListNode[10000];
+    }
+    
+    /** value will always be non-negative. */
+    public void put(int key, int value) {
+        int bucket = findHashCode(key);
+        if(Nodes[bucket]!=null)
+        {
+            ListNode current = Nodes[bucket];
+            while(current.next!=null && current.key!=key)
+            {
+                current=current.next;
+            }
+            if(current.key==key)
+                current.value=value;
+            // if(current.next==null)
+            //     current.next=new ListNode(key, value);
+            else
+                current.next= new ListNode(key, value);
+        }
+        else
+            Nodes[bucket]=new ListNode(key, value);
+        
+    }
+    
+    /** Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key */
+    public int get(int key) {
+        int bucket = findHashCode(key);
+        ListNode current=Nodes[bucket];
+        if(current==null)
+            return -1;
+        while(current.next!=null && current.key!=key)
+        {
+            current=current.next;
+        }
+        if(current.key==key)
+            return current.value;
+        else
+            return -1;
+        
+    }
+    
+    /** Removes the mapping of the specified value key if this map contains a mapping for the key */
+    public void remove(int key) {
+        int bucket = findHashCode(key);
+        ListNode current=Nodes[bucket];
+        if(current==null)
+            return;
+        if(current.key==key)
+            Nodes[bucket]=current.next;
+        else
+        {
+            while(current.next!=null && current.next.key!=key)
+            {
+                current=current.next;
+            }
+            
+            if(current.next==null)
+                return;
+            
+            if(current.next.key==key)
+            {
+                if(current.next.next==null)
+                {
+                    current.next=null;
+                }
+                else
+                {
+                    current=current.next;
+                    current.key=current.next.key;
+                    current.value=current.next.value;
+                    current.next=current.next.next;   
+                }
+            }
+            
+        }
+    }
+    
+    public int findHashCode(int key)
+    {
+        return Integer.hashCode(key)%Nodes.length;
+    }
+}
+
+class ListNode
+{
+    int key, value;
+    ListNode next;
+    ListNode(int key, int value)
+    {
+        this.key=key;
+        this.value=value;
+    }
+}
+
+/**
+ * Your MyHashMap object will be instantiated and called as such:
+ * MyHashMap obj = new MyHashMap();
+ * obj.put(key,value);
+ * int param_2 = obj.get(key);
+ * obj.remove(key);
+ */
+
+
+————————————————————————————
+Reverse Nodes in k-Group
+————————————————————————————
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if(head==null || k==1)
+            return head;
+        
+        ListNode fake = new ListNode(0);
+        fake.next=head;
+        
+        ListNode pre=fake;
+        int i=0;
+        ListNode p=head;
+        while(p!=null)
+        {
+            i++;
+            if(i%k==0)
+            {
+                pre=reverse(pre, p.next);
+                p=pre.next;
+            }
+            else
+                p=p.next;
+        }
+        return fake.next;
+    }
+    public ListNode reverse(ListNode pre, ListNode next)
+    {
+        ListNode last=pre.next;
+        ListNode curr=last.next;
+        while(curr!=next)
+        {
+            last.next=curr.next;
+            curr.next=pre.next;
+            pre.next=curr;
+            curr=last.next;
+        }
+        return last;
+    }
+}
+
+————————————————————————————
+Longest Palindromic Substring
+————————————————————————————
+
+class Solution {
+   // Key idea, every time we move to right, we only need to consider whether using this new character as tail could produce new palindrome string of length (current length +1) or (current length +2)
+    public String longestPalindrome(String s) {
+        String res = "";
+        int currLength = 0;
+        for(int i=0;i<s.length();i++){
+            if(isPalindrome(s,i-currLength-1,i)){
+                res = s.substring(i-currLength-1,i+1);
+                currLength = currLength+2;
+            }
+            else if(isPalindrome(s,i-currLength,i)){
+                res = s.substring(i-currLength,i+1);
+                currLength = currLength+1;
+            }
+        }
+        return res;
+    }
+    public boolean isPalindrome(String s, int begin, int end){
+        if(begin<0) return false;
+        while(begin<end){
+        	if(s.charAt(begin++)!=s.charAt(end--)) return false;
+        }
+        return true;
+    }
+}
+/* MORE EXPLAINATION
+
+Example: "xxxbcbxxxxxa", (x is random character, not all x are equal) now we 
+          are dealing with the last character 'a'. The current longest palindrome
+          is "bcb" with length 3.
+1. check "xxxxa" so if it is palindrome we could get a new palindrome of length 5.
+2. check "xxxa" so if it is palindrome we could get a new palindrome of length 4.
+3. do NOT check "xxa" or any shorter string since the length of the new string is 
+   no bigger than current longest length.
+4. do NOT check "xxxxxa" or any longer string because if "xxxxxa" is palindrome 
+   then "xxxx" got  from cutting off the head and tail is also palindrom. It has 
+   length > 3 which is impossible.'
+   
+   
+   
+   
+   
+   MORE EXPLAINATION:
+   QUESTION:)
+   For me, this solution is like magic.
+
+I don't understand why we only need to consider whether using the new character as tail could produce new palindrome string of length(current length +1) or (current length + 2) whenever we move to right.
+
+How do you know that we have to check "if(isPalindrome(s,i-currLength-1,i))"?
+
+Why don't we have to check "if(isPalindrome(s,i-currLength-2,i))"?
+
+ANSWER:)
+Hi, here we could take the advantage of the property of palindrome string. Assume we check "if(isPalindrome(s,i-currLength-2,i))" as you said and get a new palindrome string, then its length should be currLength+3, right? And according to palindrome string's property, when we trim both the head and tail characters of it ,we must get a palindrome string with length = currLength+1, which means in the previous round we got longest palindrome string with length = currLength+1. This is a contradiction with our definition of currLength (It's the length of longest palindrome in previous round). Does it make sense now?
+
+*/
+
+————————————————————————————
+Shortest Path in Binary Matrix
+————————————————————————————
+
+class Solution {
+    public int shortestPathBinaryMatrix(int[][] grid) {
+        
+        if(grid==null || grid.length==0 || grid[0][0]==1)
+            return -1;
+        
+        int[][] dirs={{1,0}, {0,1}, {0,-1}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
+        Queue<int[]> queue = new LinkedList<int[]>();
+        queue.add(new int[]{0,0});
+        grid[0][0]=1;
+        
+        while(!queue.isEmpty())
+        {
+            int size=queue.size();
+            for(int i=0;i<size;i++)
+            {
+                int[] current=queue.poll();
+                if(current[0]==grid.length-1 && current[1]==grid[0].length-1)
+                    return grid[grid.length-1][grid[0].length-1];
+                
+                for(int[] next : dirs)
+                {
+                    int nx=next[0]+current[0];
+                    int ny=next[1]+current[1];
+                    
+                    if(nx<0 || ny<0 || nx>grid.length-1 || ny>grid[0].length-1 || grid[nx][ny]!=0)
+                        continue;
+                    
+                    grid[nx][ny]=1+grid[current[0]][current[1]];
+                    queue.add(new int[]{nx, ny});
+                }
+            }
+        }
+        return -1;
+    }
+}
+
+————————————————————————————
+Path Sum
+————————————————————————————
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if(root==null)
+            return false;
+        return helper(root, sum);
+    }
+    
+    private boolean helper(TreeNode root, int sum)
+    {
+        if(root==null)
+            return false;
+      
+        if(root.left==null && root.right==null) // leaf node check
+        {
+            if(root.val==sum) // target check
+            {
+                return true;
+            }
+        }
+        
+        if(helper(root.left, sum-root.val) || helper(root.right, sum-root.val))
+        {
+            return true;
+        }
+        return false;
+    }
+}
+
+————————————————————————————
+Path Sum II
+————————————————————————————
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> result = new ArrayList<>();
+        if(root==null)
+            return result;
+        helper (root, sum, new ArrayList<Integer>(), result);
+        return result;
+    }
+                       
+    private void helper (TreeNode root, int sum, List<Integer> list,
+                        List<List<Integer>> result)
+    {
+        if(root==null)
+            return;
+        
+        list.add(root.val);
+        if(root.left==null && root.right==null)
+        {
+            if(root.val==sum)
+            {
+                result.add(new ArrayList<Integer>(list));
+            }
+        }
+        
+        helper(root.left, sum-root.val, list, result);
+        helper(root.right, sum-root.val, list, result);  
+        list.remove(list.size()-1);
+    }
+}
+
+————————————————————————————
+Trapping Rain Water
+————————————————————————————
+
+class Solution {
+    public int trap(int[] towerHeight) {
+        // https://www.youtube.com/watch?v=KV-Eq3wYjxI
+        if(towerHeight==null || towerHeight.length<3)
+            return 0;
+        
+        int maxSeenSoFar=0;
+        int length=towerHeight.length;
+        int maxSeenLeft=0;
+        int rainwater=0;
+        
+        int[] maxSeenRight = new int[length];
+        
+        for(int i=length-1;i>=0;i--)
+        {
+            if(towerHeight[i]>maxSeenSoFar)
+            {
+                maxSeenSoFar=towerHeight[i];
+                maxSeenRight[i]=maxSeenSoFar;
+            }
+            else
+                maxSeenRight[i]=maxSeenSoFar;
+        }
+        
+        for(int i=0 ;i<length; i++)
+        {
+            rainwater = rainwater + Math.max(Math.min(maxSeenLeft, maxSeenRight[i])-towerHeight[i],0);
+            if(towerHeight[i]>maxSeenLeft)
+            {
+                maxSeenLeft=towerHeight[i];
+            }
+        }
+        return rainwater;
+    }
+}
+
+/*
+if (height.length<3) return 0;
+        int left = 0, right = height.length -1,leftMax = 0, rightMax =0;
+        int result = 0;
+        while (left<right) {
+            leftMax = Math.max(leftMax,height[left]);
+            rightMax = Math.max(rightMax,height[right]);
+            result += leftMax<rightMax ? leftMax - height[left++] : rightMax - height[right--];
+        }
+        return result;
+*/
+
+————————————————————————————
+Median of Two Sorted Arrays
+————————————————————————————
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int len1=nums1.length;
+        int len2=nums2.length;
+        int len = nums1.length + nums2.length;
+        int[] arr = new int[len];
+        if(nums1==null || len1 ==0)
+        {
+            arr = nums2;
+        } 
+        else if(nums2==null || len2==0)
+        {
+            arr = nums1;
+        } 
+        else 
+        {
+            int in1 = 0;
+            int in2 = 0;
+            
+            boolean done1 = false;
+            boolean done2 = false;
+            for(int i = 0 ; i<len;i++)
+            {
+                if(done1)
+                {
+                    while(i<len) 
+                        arr[i++]=nums2[in2++];
+                } 
+                else if (done2)
+                {
+                    while(i<len) 
+                        arr[i++]=nums1[in1++];
+                } else 
+                {
+                    if(nums1[in1] < nums2[in2])
+                    {
+                        arr[i]=nums1[in1];
+                        in1++;
+                        if(in1==len1) 
+                            done1 = true;
+                    } 
+                    else 
+                    {
+                        arr[i]=nums2[in2];
+                        in2++;
+                        if(in2==len2) 
+                            done2 = true;
+                    }
+                }
+            }
+        }
+        if(len%2==0)
+        {
+            double ret = (arr[len/2-1]+arr[len/2]);
+            return ret/2;
+        } 
+        else 
+        {
+            return arr[len/2];
+        }
+    }
+}
+
+
+————————————————————————————
+Find Median from Data Stream
+————————————————————————————
+
+class MedianFinder {
+    private PriorityQueue<Integer> pqMin;
+    private PriorityQueue<Integer> pqMax;
+    
+    /** initialize your data structure here. */
+    public MedianFinder() {
+        pqMin = new PriorityQueue<Integer>();
+        pqMax = new PriorityQueue<Integer>(1, new Comparator<Integer>(){
+            public int compare(Integer o1, Integer o2) {
+                if (o1.intValue()>o2.intValue()) return -1;
+                if (o1.intValue()<o2.intValue()) return 1;
+                return 0;
+            }
+        });
+    }
+    
+    public void addNum(int num) {
+        pqMin.offer(num);
+        pqMax.offer(pqMin.poll());
+        if(pqMax.size() > pqMin.size()) 
+            pqMin.offer(pqMax.poll());
+    }
+    
+    
+    public double findMedian() {
+         if(pqMax.size() == pqMin.size()) {
+             return ((double)pqMax.peek() + (double)pqMin.peek())/2.0;
+         } else {
+             return (double)pqMin.peek();
+         }
+    }
+}
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
+
+————————————————————————————
+Reverse Linked List
+————————————————————————————
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        if(head==null || head.next==null)
+            return head;
+        ListNode previous=head;
+        ListNode current=head.next;
+        while(current!=null)
+        {
+            ListNode temp=current.next;
+            current.next=previous;
+            previous=current;
+            current=temp;
+        }
+        head.next=null;
+        return previous;
+    }
+}
+
+
+
+
+————————————————————————————
+Clone Graph
+————————————————————————————
+
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public List<Node> neighbors;
+
+    public Node() {}
+
+    public Node(int _val,List<Node> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+*/
+class Solution {
+    public Node cloneGraph(Node node) {
+        Map<Node, Node> map = new HashMap<>();
+    Queue<Node> queue = new LinkedList<>();
+ 
+    queue.offer(node);
+    map.put(node, new Node(node.val, new ArrayList<>()));
+    while (!queue.isEmpty()) {
+        Node h = queue.poll();
+ 
+        for (Node neighbor : h.neighbors) {
+            if (!map.containsKey(neighbor)) {
+                map.put(neighbor, new Node(neighbor.val, new ArrayList<>()));
+                queue.offer(neighbor);
+            }
+            map.get(h).neighbors.add(map.get(neighbor));
+        }
+    }
+ 
+    return map.get(node);
+    }
+}
+
+————————————————————————————
+Course Schedule
+————————————————————————————
+
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        if(prerequisites == null){
+        throw new IllegalArgumentException("illegal prerequisites array");
+    }
+ 
+    int len = prerequisites.length;
+ 
+    if(numCourses == 0 || len == 0){
+        return true;
+    }
+ 
+    // counter for number of prerequisites
+    int[] pCounter = new int[numCourses];
+    for(int i=0; i<len; i++){
+        pCounter[prerequisites[i][0]]++;
+    }
+ 
+    //store courses that have no prerequisites
+    LinkedList<Integer> queue = new LinkedList<Integer>();
+    for(int i=0; i<numCourses; i++){
+        if(pCounter[i]==0){
+            queue.add(i);
+        }
+    }
+        
+    if(queue.isEmpty())
+        return false;
+ 
+    // number of courses that have no prerequisites
+    int numNoPre = queue.size();
+ 
+    while(!queue.isEmpty()){
+        int top = queue.remove();
+        for(int i=0; i<len; i++){
+            // if a course's prerequisite can be satisfied by a course in queue
+            if(prerequisites[i][1]==top){
+                pCounter[prerequisites[i][0]]--;
+                if(pCounter[prerequisites[i][0]]==0){
+                    numNoPre++;
+                    queue.add(prerequisites[i][0]);
+                }
+            }
+        }
+    }
+ 
+    return numNoPre == numCourses; 
+    }
+}
+
+————————————————————————————
+Course Schedule II
+————————————————————————————
+
+class Solution {
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+            if(prerequisites == null){
+        throw new IllegalArgumentException("illegal prerequisites array");
+    }
+ 
+    int len = prerequisites.length;
+ 
+    //if there is no prerequisites, return a sequence of courses
+    if(len == 0){
+        int[] res = new int[numCourses];
+        for(int m=0; m<numCourses; m++){
+            res[m]=m;
+        }
+        return res;
+    }
+ 
+    //records the number of prerequisites each course (0,...,numCourses-1) requires
+    int[] pCounter = new int[numCourses];
+    for(int i=0; i<len; i++){
+        pCounter[prerequisites[i][0]]++;
+    }
+ 
+    //stores courses that have no prerequisites
+    LinkedList<Integer> queue = new LinkedList<Integer>();
+    for(int i=0; i<numCourses; i++){
+        if(pCounter[i]==0){
+            queue.add(i);
+        }
+    }
+ 
+    int numNoPre = queue.size();
+ 
+    //initialize result
+    int[] result = new int[numCourses];
+    
+    if(queue.isEmpty())
+        return new int[0];
+        
+    int j=0;
+ 
+    while(!queue.isEmpty()){
+        int c = queue.remove();
+        result[j++]=c;
+ 
+        for(int i=0; i<len; i++){
+            if(prerequisites[i][1]==c){
+                pCounter[prerequisites[i][0]]--;
+                if(pCounter[prerequisites[i][0]]==0){
+                    queue.add(prerequisites[i][0]);
+                    numNoPre++;
+                }
+            }
+ 
+        }
+    }
+ 
+    //return result
+    if(numNoPre==numCourses){
+        return result;
+    }else{
+        return new int[0];
+    }
+    }
+}
+
+————————————————————————————
+Copy List with Random Pointer
+————————————————————————————
+
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node next;
+    public Node random;
+
+    public Node() {}
+
+    public Node(int _val,Node _next,Node _random) {
+        val = _val;
+        next = _next;
+        random = _random;
+    }
+};
+*/
+class Solution {
+    public Node copyRandomList(Node head) {
+        if(head == null)
+            return head;
+        HashMap<Node, Node> map = new HashMap<>();
+        
+        Node node=head;
+        while(node!=null)
+        {
+            map.put(node, new Node(node.val));
+            node=node.next;
+        }
+        
+        node = head;
+        while(node!=null)
+        {
+            if(map.get(node.next)==null)
+                map.get(node).next=null;
+            else
+                map.get(node).next=map.get(node.next);
+            
+            if(map.get(node.random)==null)
+                map.get(node).random=null;
+            else
+                map.get(node).random=map.get(node.random);
+            
+            node=node.next;
+        }
+        return map.get(head);
+    }
+}
+
+————————————————————————————
+Add Two Numbers II
+————————————————————————————
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        Stack<Integer> s1 = new Stack<Integer>();
+        Stack<Integer> s2 = new Stack<Integer>();
+        
+        while(l1 != null) {
+            s1.push(l1.val);
+            l1 = l1.next;
+        }
+        while(l2 != null) {
+            s2.push(l2.val);
+            l2 = l2.next;
+        }
+        
+        int sum = 0;
+        ListNode list = new ListNode(0);
+        while (!s1.empty() || !s2.empty()) {
+            if (!s1.empty()) sum += s1.pop();
+            if (!s2.empty()) sum += s2.pop();
+            list.val = sum % 10;
+            ListNode head = new ListNode(sum / 10);
+            head.next = list;
+            list = head;
+            sum /= 10;
+        }
+        
+        return list.val == 0 ? list.next : list;
+    }
+}
+
+————————————————————————————
+Partition to K Equal Sum Subsets
+————————————————————————————
+
+class Solution {
+    public boolean canPartitionKSubsets(int[] nums, int k) {
+        if(nums==null || nums.length==0 || k==0)
+            return true;
+        int sum=0;
+        for(int n : nums)
+            sum+=n;
+        if(sum%k!=0)
+            return false;
+        int target=sum/k;
+        boolean[] visited = new boolean[nums.length];
+        return partition(nums, target, visited, k, 0, 0);  
+    }
+    public boolean partition(int[] nums, int target, boolean[] visited, int k, int currentSum, int currentIndex)
+    {
+        if(k==0)
+            return true;
+        if(currentSum==target)
+            return partition(nums, target, visited, k-1, 0, 0);
+        if(currentSum>target)
+            return false;
+        for(int i=currentIndex; i<nums.length; i++)
+        {
+            if(visited[i])
+                continue;
+            if(currentSum<target)
+            {
+                visited[i]=true;
+                boolean res=partition(nums, target, visited, k, currentSum+nums[i], currentIndex+1);
+                visited[i]=false;
+                if(res)
+                    return true;
+            }
+        }
+        return false;
+    }
+      
+}
+
+————————————————————————————
+Restore IP Addresses
+————————————————————————————
+
+class Solution {
+    public List<String> restoreIpAddresses(String s) {
+        List<String> allIpAddresses = new ArrayList<String>();
+        int[] path = new int[4];
+        snapshotOfWholeString(allIpAddresses, path, s, 0, 0);
+        return allIpAddresses;
+    }
+    
+        private void snapshotOfWholeString(List<String> allIpAddresses, int[]path, String s, int buildIndex, int segment)
+    {
+        if(segment==4 && buildIndex==s.length())
+        {
+            allIpAddresses.add(path[0]+"."+path[1]+"."+path[2]+"."+path[3]);
+            return;
+        }
+        else if(segment==4 || buildIndex==s.length())
+            return;
+        
+        for(int len=1; len<=3 && buildIndex+len<=s.length(); len++)
+        {
+            String snapshot = s.substring(buildIndex, buildIndex+len);
+            int value = Integer.parseInt(snapshot);
+            if(value>255 || len>=2 && s.charAt(buildIndex)=='0')
+                break;
+            
+            path[segment]=value;
+            snapshotOfWholeString(allIpAddresses, path, s, buildIndex+len, segment+1);
+            path[segment]=-1;
+        }
+        
+    }
+
+}
+
+————————————————————————————
+Meeting Rooms II
+————————————————————————————
+
+public class MeetingRoom2 {
+    public int minMeetingRooms(Interval[] intervals) {
+        if(intervals == null || intervals.length == 0) return 0;
+        Arrays.sort(intervals, new Comparator<Interval>(){
+            public int compare(Interval ia, Interval ib){
+                return ia.start - ib.start;
+            }
+        });
+ 
+        PriorityQueue<Integer> minEndTimes = new PriorityQueue<>();
+        minEndTimes.offer(intervals[0].end);
+        for(int i = 1; i < intervals.length; i++) {
+ 
+            if (intervals[i].start >= minEndTimes.peek()) {
+                minEndTimes.poll();
+                minEndTimes.offer(intervals[i].end);
+            } else {
+                minEndTimes.offer(intervals[i].end);
+            }
+        }
+ 
+    return minEndTimes.size();
+}
+}
+
+
+————————————————————————————
+Meeting rooms
+————————————————————————————
+
+public class MeetingRooms {
+    public boolean canAttendMeetings(Interval[] intervals) {
+        if(intervals == null || intervals.length == 0) return true;
+        Arrays.sort(intervals, new Comparator<T>(){
+            public int compare(Interval ia, Interval ib){
+                return ia.start - ib.start;
+            }
+        });
+ 
+        int latestEnd = intervals[0].end;
+ 
+        for(int i = 1; i < intervals.length; i++){
+ 
+            if(intervals[i].start < latestEnd) return false;
+            latestEnd = Math.max(latestEnd, intervals[i].end);
+        }
+        return true;
+    }
+}
+
+
+————————————————————————————
+Quicksort Array - Middle element as pivot
+————————————————————————————
+
+public class QuickSort {
+	public static void main(String[] args) {
+		int[] x = { 9, 2, 4, 7, 3, 7, 10 };
+		System.out.println(Arrays.toString(x));
+ 
+		int low = 0;
+		int high = x.length - 1;
+ 
+		quickSort(x, low, high);
+		System.out.println(Arrays.toString(x));
+	}
+ 
+	public static void quickSort(int[] arr, int low, int high) {
+		if (arr == null || arr.length == 0)
+			return;
+ 
+		if (low >= high)
+			return;
+ 
+		// pick the pivot
+		int middle = low + (high - low) / 2;
+		int pivot = arr[middle];
+ 
+		// make left < pivot and right > pivot
+		int i = low, j = high;
+		while (i <= j) {
+			while (arr[i] < pivot) {
+				i++;
+			}
+ 
+			while (arr[j] > pivot) {
+				j--;
+			}
+ 
+			if (i <= j) {
+				int temp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = temp;
+				i++;
+				j--;
+			}
+		}
+ 
+		// recursively sort two sub parts
+		if (low < j)
+			quickSort(arr, low, j);
+ 
+		if (high > i)
+			quickSort(arr, i, high);
+	}
+}
+
+
+————————————————————————————
+Alien Dictionary
+————————————————————————————
+
+/*
+	Thoughts:
+	Topological sort with BFS. The tricky part is: how to construct the node-edge relationship?
+	For the same index of two strings: if the word1[index] != word2[index],
+	that means c1 is at the leading position than c2 in topological order.
+	
+	Use this feature to build the edges.
+	
+	1. Build graph
+	2. Calculate indegree
+	3. BFS
+	*/
+	class Solution {
+	    public String alienOrder(String[] words) {
+	        if (words == null || words.length == 0) return "";
+	        
+	        // Build graph && indegree map
+	        Map<Character, List<Character>> graph = new HashMap<>();
+	        Map<Character, Integer> inDegree = new HashMap<>();
+	        build(graph, inDegree, words);
+	        
+	        // Topological sort with BFS
+	        return topoSort(graph, inDegree);
+	    }
+	    
+	    private void build(Map<Character, List<Character>> graph, Map<Character, Integer> inDegree, String[] words) {
+	        // Init graph, inDegree map
+	        for (String word : words) {
+	            for (char c : word.toCharArray()) {
+	                graph.putIfAbsent(c, new ArrayList<>());
+	                inDegree.putIfAbsent(c, 0);
+	            }
+	        }
+	        // Build graph: find char diff between curr row and next row => build graph edge and increase inDegree relationship
+	        // always compare same index on: words[i] -> words[i+1]
+	        // if c1 != c2, build graph and inDegree map and break: later index does not have any more relationship.
+	        for (int i = 0; i < words.length - 1; i++) {
+	            int index = 0;
+	            while (index < words[i].length() && index < words[i + 1].length()) {
+	                char c1 = words[i].charAt(index);
+	                char c2 = words[i + 1].charAt(index);
+	                if (c1 != c2) {
+	                    graph.get(c1).add(c2);
+	                    inDegree.put(c2, inDegree.get(c2) + 1);
+	                    break;
+	                }
+	                index++;
+	            }
+	        }
+	    }
+
+
+	    private String topoSort(Map<Character, List<Character>> graph, Map<Character, Integer> inDegree) {
+	        Queue<Character> queue = new LinkedList<>();
+	        for (char c : inDegree.keySet()) { // Build queue with item of inDegree==0: means no edge points towards it.
+	            if (inDegree.get(c) == 0) queue.offer(c);
+	        }
+
+
+	        StringBuffer sb = new StringBuffer();
+	        while (!queue.isEmpty()) {
+	            char c = queue.poll();
+	            sb.append(c);
+	            for (char edgeNode : graph.get(c)) { // reduce edge degrees count since node:graph.get(c) has been processed
+	                inDegree.put(edgeNode, inDegree.get(edgeNode) - 1);
+	                if (inDegree.get(edgeNode) == 0) queue.offer(edgeNode);
+	            }
+	        }
+	        
+	        if (sb.length() != graph.size()) return "";
+	        return sb.toString();
+	    }
+	}
+
+
+————————————————————————————
+Huffman Coding
+————————————————————————————
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
+
+// A Tree node
+class Node
+{
+	char ch;
+	int freq;
+	Node left = null, right = null;
+
+	Node(char ch, int freq)
+	{
+		this.ch = ch;
+		this.freq = freq;
+	}
+
+	public Node(char ch, int freq, Node left, Node right) {
+		this.ch = ch;
+		this.freq = freq;
+		this.left = left;
+		this.right = right;
+	}
+};
+
+class Huffman
+{
+	// traverse the Huffman Tree and store Huffman Codes
+	// in a map.
+	public static void encode(Node root, String str,
+							  Map<Character, String> huffmanCode)
+	{
+		if (root == null)
+			return;
+
+		// found a leaf node
+		if (root.left == null && root.right == null) {
+			huffmanCode.put(root.ch, str);
+		}
+
+
+		encode(root.left, str + "0", huffmanCode);
+		encode(root.right, str + "1", huffmanCode);
+	}
+
+	// traverse the Huffman Tree and decode the encoded string
+	public static int decode(Node root, int index, StringBuilder sb)
+	{
+		if (root == null)
+			return index;
+
+		// found a leaf node
+		if (root.left == null && root.right == null)
+		{
+			System.out.print(root.ch);
+			return index;
+		}
+
+		index++;
+
+		if (sb.charAt(index) == '0')
+			index = decode(root.left, index, sb);
+		else
+			index = decode(root.right, index, sb);
+
+		return index;
+	}
+
+	// Builds Huffman Tree and huffmanCode and decode given input text
+	public static void buildHuffmanTree(String text)
+	{
+		// count frequency of appearance of each character
+		// and store it in a map
+		Map<Character, Integer> freq = new HashMap<>();
+		for (int i = 0 ; i < text.length(); i++) {
+			if (!freq.containsKey(text.charAt(i))) {
+				freq.put(text.charAt(i), 0);
+			}
+			freq.put(text.charAt(i), freq.get(text.charAt(i)) + 1);
+		}
+
+		// Create a priority queue to store live nodes of Huffman tree
+		// Notice that highest priority item has lowest frequency
+		PriorityQueue<Node> pq = new PriorityQueue<>(
+										(l, r) -> l.freq - r.freq);
+
+		// Create a leaf node for each character and add it
+		// to the priority queue.
+		for (Map.Entry<Character, Integer> entry : freq.entrySet()) {
+			pq.add(new Node(entry.getKey(), entry.getValue()));
+		}
+
+		// do till there is more than one node in the queue
+		while (pq.size() != 1)
+		{
+			// Remove the two nodes of highest priority
+			// (lowest frequency) from the queue
+			Node left = pq.poll();
+			Node right = pq.poll();
+
+			// Create a new internal node with these two nodes as children 
+			// and with frequency equal to the sum of the two nodes
+			// frequencies. Add the new node to the priority queue.
+			int sum = left.freq + right.freq;
+			pq.add(new Node('\0', sum, left, right));
+		}
+
+		// root stores pointer to root of Huffman Tree
+		Node root = pq.peek();
+
+		// traverse the Huffman tree and store the Huffman codes in a map
+		Map<Character, String> huffmanCode = new HashMap<>();
+		encode(root, "", huffmanCode);
+
+		// print the Huffman codes
+		System.out.println("Huffman Codes are :\n");
+		for (Map.Entry<Character, String> entry : huffmanCode.entrySet()) {
+			System.out.println(entry.getKey() + " " + entry.getValue());
+		}
+
+		System.out.println("\nOriginal string was :\n" + text);
+
+		// print encoded string
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0 ; i < text.length(); i++) {
+			sb.append(huffmanCode.get(text.charAt(i)));
+		}
+
+		System.out.println("\nEncoded string is :\n" + sb);
+
+		// traverse the Huffman Tree again and this time
+		// decode the encoded string
+		int index = -1;
+		System.out.println("\nDecoded string is: \n");
+		while (index < sb.length() - 2) {
+			index = decode(root, index, sb);
+		}
+	}
+
+	public static void main(String[] args)
+	{
+		String text = "Huffman coding is a data compression algorithm.";
+
+		buildHuffmanTree(text);
+	}
+}
+
+————————————————————————————
+Add Two Numbers
+————————————————————————————
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+         int carry=0;
+        ListNode newHead = new ListNode(0);
+        ListNode p1=l1, p2=l2, p3=newHead;
+        
+        while(p1!=null || p2!=null)
+        {
+            if(p1!=null)
+            {
+                carry+=p1.val;
+                p1=p1.next;
+            }
+            if(p2!=null)
+            {
+                carry+=p2.val;
+                p2=p2.next;
+            }
+            p3.next = new ListNode(carry%10);
+            p3=p3.next;
+            carry/=10;
+            
+        }
+        if(carry==1)
+            p3.next=new ListNode(1);
+        
+        return newHead.next;
+    }
+}
+
 _____________________________________________________________________
 
 _____________________________________________________________________
